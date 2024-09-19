@@ -16,3 +16,37 @@ To understand and be able to apply information retrieval technology in automated
 * [ ] Serching and Visualization the PubMed Documents
 * [ ] ChatGPT and LLM Family
 * [ ] Final Course Project 
+
+
+[Development Environment Setup]
+* Visual Studio 2022
+  * NLP Lib Study in Csharp
+    * Catalyst
+      * Install Nuget Package `Catalyst`
+        ```
+          dotnet add package Catalyst
+        ```
+        ```csharp
+        using System;
+        using Catalyst;
+        ```
+    * ML.NET
+      * Install Nuget Package `ML.NET`
+        ```
+          dotnet add package Microsoft.ML
+        ```
+        ```csharp
+        using System;
+        using Microsoft.ML;
+        using Microsoft.ML.Data;
+        ```
+    * Python
+      * Install Nuget Package `Python.NET`
+        ```
+          dotnet add package Python.Runtime 
+        ```
+        ```csharp
+        using System;
+        using Python.Runtime;
+        ```
+ 
