@@ -23,9 +23,12 @@ namespace SearchEnginesApp
     public partial class MainForm : Form
     {
         private readonly ToolModel _toolModel;
-        private readonly SerchEnginePresenter _SerchEnginePresenter;
+        private readonly SearchEnginePresenter _SerchEnginePresenter;
+        private readonly SearchEngineTopPresenter _SerchEngineTopPresenter;
+        private readonly FilesTreePresenter _FilesTreePresenter;
+        private readonly List<TabPage> _tabPages = new List<TabPage>();
 
-
+        
         public MainForm()
         {
             InitializeComponent();
@@ -33,11 +36,20 @@ namespace SearchEnginesApp
 
             Text = $"SearchEngines {versionInfo.FileVersion}";
 
-            _SerchEnginePresenter = new SerchEnginePresenter(_toolModel);
-            panelView.Controls.Add(_SerchEnginePresenter.ShowView());
+            _toolModel = new ToolModel();
+
+            _SerchEnginePresenter = new SearchEnginePresenter(_toolModel);
+            tpSearchResult.Controls.Add(_SerchEnginePresenter.ShowView());
+
+            _SerchEngineTopPresenter = new SearchEngineTopPresenter(_toolModel);
+            MainTopView.Controls.Add(_SerchEngineTopPresenter.ShowView());
+
+            _FilesTreePresenter = new FilesTreePresenter(_toolModel);
+            splitContainer1.Panel1.Controls.Add(_FilesTreePresenter.ShowView());
 
         }
- 
+
+
 
     }
 }

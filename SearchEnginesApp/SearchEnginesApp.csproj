@@ -8,11 +8,12 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>SearchEnginesApp</RootNamespace>
     <AssemblyName>SearchEnginesApp</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
     <IsWebBootstrapper>false</IsWebBootstrapper>
+    <TargetFrameworkProfile />
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -87,15 +88,29 @@
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Presenters\SerchEnginePresenter.cs" />
+    <Compile Include="Presenters\FilesTreePresenter.cs" />
+    <Compile Include="Presenters\SearchEngineTopPresenter.cs" />
+    <Compile Include="Presenters\SearchEnginePresenter.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ToolModel.cs" />
-    <Compile Include="Views\SerchEngineView.cs">
+    <Compile Include="Views\FilesTreeView.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Views\SerchEngineView.Designer.cs">
-      <DependentUpon>SerchEngineView.cs</DependentUpon>
+    <Compile Include="Views\FilesTreeView.Designer.cs">
+      <DependentUpon>FilesTreeView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SearchEngineTopView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Views\SearchEngineTopView.Designer.cs">
+      <DependentUpon>SearchEngineTopView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SearchEngineResultView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Views\SearchEngineResultView.Designer.cs">
+      <DependentUpon>SearchEngineResultView.cs</DependentUpon>
     </Compile>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
@@ -108,9 +123,16 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="Views\SerchEngineView.resx">
-      <DependentUpon>SerchEngineView.cs</DependentUpon>
+    <EmbeddedResource Include="Views\FilesTreeView.resx">
+      <DependentUpon>FilesTreeView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\SearchEngineTopView.resx">
+      <DependentUpon>SearchEngineTopView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\SearchEngineResultView.resx">
+      <DependentUpon>SearchEngineResultView.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">

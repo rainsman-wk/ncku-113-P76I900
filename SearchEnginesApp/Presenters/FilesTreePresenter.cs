@@ -2,28 +2,39 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static SearchEnginesApp.ToolModel;
 
 namespace SearchEnginesApp.Presenters
 {
-    public class SerchEnginePresenter
+    public class FilesTreePresenter
     {
         private readonly ToolModel _toolModel;
-        private SerchEngineView View { get; set; }
+        private FilesTreeView View { get; set; }
 
         /// <summary>
-        /// SerchEngine Presenter
+        /// Files Tree Presenter
         /// </summary>
         /// <param name="toolModel">The Tool Model</param>
-        public SerchEnginePresenter(ToolModel toolModel)
+        public FilesTreePresenter(ToolModel toolModel)
         {
             _toolModel = toolModel;
+            _toolModel.FilesLoaded += ToolModel_FilesLoadedEventReceived;
+
         }
 
+        #region Handler
+        private void ToolModel_FilesLoadedEventReceived(object sender, FileEventArgs e)
+        {
+            View.DisplayFileTree(e.XmlFiles, e.JsonFiles);
+        }
+        #endregion Handler
 
+
+        #region View realted... 
         /// <summary>
         /// Method to show the view
         /// </summary>
@@ -32,7 +43,7 @@ namespace SearchEnginesApp.Presenters
         {
             if (View == null || View.IsDisposed)
             {
-                View = new SerchEngineView(this);
+                View = new FilesTreeView(this);
                 /* Register the required events */
             }
 
@@ -46,11 +57,13 @@ namespace SearchEnginesApp.Presenters
         {
             if (View != null && !View.IsDisposed) View.Dispose();
         }
+        #endregion View realted...
+
+        public void SaveSelectFileState(string node, bool check)
+        {
+            _toolModel.UpdateFileState(node, check);
+        }
 
 
     }
-
-
-
-
 }
