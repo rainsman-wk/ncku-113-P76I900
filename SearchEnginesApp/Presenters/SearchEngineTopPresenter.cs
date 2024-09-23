@@ -100,15 +100,14 @@ namespace SearchEnginesApp.Presenters
             List<string> searchlist = new List<string>();
             _toolModel.GetSearchFileList(out searchlist);
 
-            SearchBooks book = new SearchBooks();
+            List<SearchBooks> books = new List<SearchBooks>();
+
             for(int i = 0; i< searchlist.Count; i++)
             {
-                book.Path = searchlist[i];
-                book.Content = GetXmlContent(searchlist[i]);
-                _toolModel.AddSearchBooks(book);
-            }
+                books.Add(new SearchBooks(searchlist[i], GetXmlContent(searchlist[i])));
+             }
             // Trigger Event to other view to update Serach book
-            _toolModel.SetEventUpdateSerchBook();
+            _toolModel.SetEventUpdateSerchBook(books);
         }
         public void SetSearchKeyWord(KeywordArg keyword)
         {

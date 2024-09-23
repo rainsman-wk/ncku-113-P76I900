@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using static SearchEnginesApp.ToolModel;
 
 namespace SearchEnginesApp.Presenters
@@ -115,6 +116,18 @@ namespace SearchEnginesApp.Presenters
             if (View != null && !View.IsDisposed) View.Dispose();
         }
         #endregion View realted...
+
+        public string GetFileContent(string name)
+        {
+            string page = string.Empty;
+            FileContent file = _toolModel.GetSearchBookContent(name);
+
+            for (int i = 0; i < file.Content.Count; i++)
+            {
+                page += file.Content[i] + Environment.NewLine;
+            }
+            return page;
+        }
 
     }
 

@@ -34,7 +34,7 @@ namespace SearchEnginesApp.Views
         public void UpdateFileList(List<string> Name, List<FileContent> filedata)
         {
             ResetResultViewPage();
-            if (Name.Count == filedata.Count )
+            if (Name.Count == filedata.Count)
             {
                 for (int i = 0; i < filedata.Count; i++)
                 {
@@ -44,7 +44,7 @@ namespace SearchEnginesApp.Views
                 }
             }
         }
-        
+
         public void LoadSelectContent(List<string> Name, List<FileContent> filedata)
         {
             int selectidx = BooksDataGridView.SelectedRows.Count;
@@ -66,40 +66,56 @@ namespace SearchEnginesApp.Views
         public void UpdateFileSearchResult(List<string> Name, List<FileContent> filedata, KeywordArg keywordarg)
         {
             // Keyword Seraching in Files
-            int selectidx = BooksDataGridView.SelectedRows.Count;
-
+            int count = 0;
             StringComparison checkoption = (keywordarg.MatchCase) ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
-            switch (keywordarg.Mode)
+            for (int i = 0; i < Name.Count; i++)
             {
-                case SearchMode.Word:
-                    foreach (var word in filedata[selectidx].Word)
-                    {   // TODO : use word arrary, no fix index
-                        if (word.Equals(keywordarg.Keywords[0], checkoption))
-                        {
-                            HighlightKeyword_FileRows(Name[selectidx], Color.LightGreen);
+                bool result = false;
+                switch (keywordarg.Mode)
+                {
+                    case SearchMode.Word:
+                        foreach (var word in filedata[i].Word)
+                        {   // TODO : use word arrary, no fix index
+                            if (word.Equals(keywordarg.Keywords[0], checkoption))
+                            {
+                                HighlightKeyword_FileRows(Name[i], Color.LightGreen);
+                                result = true;
+                            }
                         }
-                    }
-                    break;
-                case SearchMode.Phrase:
-                    foreach (var phrase in filedata[selectidx].Sentence)
-                    {   // TODO : use phrase arrary, no fix index
-                        if (phrase.Equals(keywordarg.Keywords[0], checkoption))
-                        {
-                            HighlightKeyword_FileRows(Name[selectidx], Color.YellowGreen);
+                        break;
+                    case SearchMode.Phrase:
+                        foreach (var phrase in filedata[i].Sentence)
+                        {   // TODO : use phrase arrary, no fix index
+                            if (phrase.Equals(keywordarg.Keywords[0], checkoption))
+                            {
+                                HighlightKeyword_FileRows(Name[i], Color.YellowGreen);
+                                result = true;
+                            }
                         }
-                    }
-                    break;
-                case SearchMode.Others:
-                default:
-                    foreach (var others in filedata[selectidx].Content)
-                    {
-                        // TODO : use no limit arrary, no fix index
-                        if (others.Equals(keywordarg.Keywords[0], checkoption))
+                        break;
+                    case SearchMode.Others:
+                    default:
+                        Regex regex = new Regex(keywordarg.Keywords[0], (keywordarg.MatchCase) ? RegexOptions.None : RegexOptions.IgnoreCase);
+                        foreach (var others in filedata[i].Content)
                         {
-                            HighlightKeyword_FileRows(Name[selectidx], Color.LightSeaGreen);
-                        }
-                    }
-                    break;
+                            MatchCollection matches = regex.Matches(others);
+                            if(matches.Count>0)
+                            {
+                                HighlightKeyword_FileRows(Name[i], Color.LightSeaGreen);
+                                result = true;
+                            }
+                          }
+                        break;
+                }
+                if (result) { count++; }
+            }
+            if (count == 0)
+            {
+                UpdateFileSearchResultLabel(Color.Red, $"Keyword(s) not found in File");
+            }
+            else
+            {
+                UpdateFileSearchResultLabel(Color.Blue, $"Count:{count} matches in file List");
             }
         }
 
@@ -110,9 +126,9 @@ namespace SearchEnginesApp.Views
             // Keyword Seraching in Files
             HighlightKeywords_ContentPage(keywordarg, Color.Yellow);
         }
-        
+
         #endregion View Feature
-        public void UpdateLabelSearchResult(string text , Color color)
+        public void UpdateLabelSearchResult(string text, Color color)
         {
             labelResult.Text = text;
             labelResult.ForeColor = color;
@@ -154,7 +170,6 @@ namespace SearchEnginesApp.Views
                 if (BooksDataGridView.Rows.Count > rowIdx && BooksDataGridView.Columns.Count > columnIdx)
                 {
                     filename = BooksDataGridView.Rows[rowIdx].Cells[columnIdx].Value.ToString();
-
                 }
             }
             catch (Exception ex)
@@ -163,7 +178,6 @@ namespace SearchEnginesApp.Views
             }
             return filename;
         }
-
 
         private void ResetHighlitKeywords(bool Inselection)
         {
@@ -184,7 +198,6 @@ namespace SearchEnginesApp.Views
             int count = 0;
             Regex regex;
             RegexOptions checkoption = (keywordarg.MatchCase) ? RegexOptions.None : RegexOptions.IgnoreCase;
-
 
             foreach (string keyword in keywordarg.Keywords)
             {
@@ -210,7 +223,7 @@ namespace SearchEnginesApp.Views
                     matches = regex.Matches(richTextBoxFileContent.SelectedText);
                     foreach (Match match in matches)
                     {
-                        richTextBoxFileContent.Select(match.Index+ selectstart, match.Length);
+                        richTextBoxFileContent.Select(match.Index + selectstart, match.Length);
                         richTextBoxFileContent.SelectionBackColor = color;
                         count++;
                     }
@@ -221,20 +234,17 @@ namespace SearchEnginesApp.Views
                     matches = regex.Matches(richTextBoxFileContent.Text);
                     foreach (Match match in matches)
                     {
-                        richTextBoxFileContent.Select(match.Index , match.Length);
+                        richTextBoxFileContent.Select(match.Index, match.Length);
                         richTextBoxFileContent.SelectionBackColor = color;
                         count++;
                     }
                 }
-
-                
-
             }
 
             if (count == 0)
             {
                 UpdateLabelSearchResult(String.Empty, Color.Red);
-                UpdateFileSearchResultLabel(Color.Red,$"Keyword(s) not found");
+                UpdatePageSearchResultLabel(Color.Red, $"Keyword(s) not found in Page");
             }
             else
             {
@@ -242,17 +252,34 @@ namespace SearchEnginesApp.Views
                 result += Environment.NewLine;
                 result += $"Counts : {count}" + Environment.NewLine;
                 UpdateLabelSearchResult(result, Color.Blue);
-                UpdateFileSearchResultLabel(Color.Blue, $"Count:{count} matches in entire file");
+                UpdatePageSearchResultLabel(Color.Blue, $"Count:{count} matches in entire file");
 
             }
         }
 
-        private void UpdateFileSearchResultLabel(Color color , String result)
+        private void UpdateFileSearchResultLabel(Color color, String result)
         {
             // Deault Value : File Search Result: None
-            labelFileStatus.Text = result;
-            labelFileStatus.ForeColor = color;
+            labelFileSearchResult.Text = result;
+            labelFileSearchResult.ForeColor = color;
+        }
+
+        private void UpdatePageSearchResultLabel(Color color, String result)
+        {
+            // Deault Value : File Search Result: None
+            labelPageSearchResult.Text = result;
+            labelPageSearchResult.ForeColor = color;
+        }
+
+        private void BooksDataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if(BooksDataGridView.SelectedRows.Count>0)
+            {
+                int selectidx = BooksDataGridView.SelectedRows[0].Index;
+                string selectfile = GetSelectFile(selectidx);
+                string content = _presenter.GetFileContent(selectfile);
+                richTextBoxFileContent.Text = content;
+            }
         }
     }
-
 }

@@ -82,8 +82,9 @@ namespace SearchEnginesApp
         #region File Analsis Event...
 
         #endregion File Analsis Event...
-        public void SetEventUpdateSerchBook()
+        public void SetEventUpdateSerchBook(List<SearchBooks> books)
         {
+            bookDataBase = books;
             OnGetSearchData(new FileAnalsisEventArgs(bookDataBase));
         }
         protected virtual void OnGetSearchData(FileAnalsisEventArgs e)
@@ -171,8 +172,16 @@ namespace SearchEnginesApp
             public string Path { get; set; }
 
             public FileContent Content { get; set; }
-
-
+            public SearchBooks()
+            {
+                Path = string.Empty;
+                Content = new FileContent();
+            }
+            public SearchBooks(string path, FileContent content)
+            {
+                Path = path;
+                Content = content;
+            }
         }
         #endregion Testboox
 
@@ -282,9 +291,6 @@ namespace SearchEnginesApp
                 if (Path.GetFileNameWithoutExtension(list.File) == value)
                 {
                     list.CheckedState = check;
-#if (DEBUG)
-                    Console.WriteLine($"{DateTime.Now.ToString("yyyy-mm-dd HH:mm:ss.ss")} : DEBUG_MSG : Filebooks Update [{Path.GetFileName(list.File)}] State[{list.CheckedState.ToString()}]");
-#endif
                     break;
                 }
             }
@@ -328,17 +334,6 @@ namespace SearchEnginesApp
         {
             bookDataBase.Clear();
         }
-        public void AddSearchBooks(SearchBooks book)
-        {
-            bookDataBase.Add(book);
-#if (DEBUG)
-            if(bookDataBase.Count >0)
-            {
-                int idx = bookDataBase.Count - 1;
-                Console.WriteLine($"{DateTime.Now.ToString("yyyy-mm-dd HH:mm:ss.ss")} : DEBUG_MSG : bookDataBase [{Path.GetFileName(bookDataBase[idx].Path)}] Book [{Path.GetFileName(book.Path)}] ");
-            }
-#endif
-        }
         public bool RemoveSearchBooks(SearchBooks book)
         {
             bool result = false;
@@ -357,6 +352,19 @@ namespace SearchEnginesApp
         {
             return bookDataBase;
         }
+        public FileContent GetSearchBookContent(string filename)
+        {
+            FileContent content = new FileContent();
+            foreach (var file in bookDataBase)
+            {
+                if(Path.GetFileNameWithoutExtension(file.Path) == filename)
+                {
+                    content = file.Content;
+                }
+            }
+            return content;
+        }
+
         #endregion Serach Book feature
         #region Keyword feature...
         public void ResetSerchKeyword()
@@ -380,8 +388,6 @@ namespace SearchEnginesApp
             return keywords;
         }
         #endregion Keyword feature...
-
-
     }
 
 
