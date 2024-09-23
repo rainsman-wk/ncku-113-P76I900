@@ -23,7 +23,7 @@ namespace SearchEnginesApp
     public partial class MainForm : Form
     {
         private readonly ToolModel _toolModel;
-        private readonly SearchEnginePresenter _SerchEnginePresenter;
+        private readonly SearchEngineResultPresenter _SerchEnginePresenter;
         private readonly SearchEngineTopPresenter _SerchEngineTopPresenter;
         private readonly FilesTreePresenter _FilesTreePresenter;
         private readonly List<TabPage> _tabPages = new List<TabPage>();
@@ -38,7 +38,7 @@ namespace SearchEnginesApp
 
             _toolModel = new ToolModel();
 
-            _SerchEnginePresenter = new SearchEnginePresenter(_toolModel);
+            _SerchEnginePresenter = new SearchEngineResultPresenter(_toolModel);
             tpSearchResult.Controls.Add(_SerchEnginePresenter.ShowView());
 
             _SerchEngineTopPresenter = new SearchEngineTopPresenter(_toolModel);

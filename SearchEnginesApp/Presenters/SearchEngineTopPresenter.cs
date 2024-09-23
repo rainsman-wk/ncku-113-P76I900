@@ -113,6 +113,7 @@ namespace SearchEnginesApp.Presenters
         public void SetSearchKeyWord(KeywordArg keyword)
         {
             _toolModel.SetSearchKeyword(keyword);
+            _toolModel.SetKeywordSearchEvent();
         }
         #endregion Search Features...
 

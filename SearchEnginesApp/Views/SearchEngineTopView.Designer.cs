@@ -34,7 +34,10 @@
             this.buttonGetXmlFile = new System.Windows.Forms.Button();
             this.pmidTextBox = new System.Windows.Forms.TextBox();
             this.gbLoadFile = new System.Windows.Forms.GroupBox();
+            this.buttonFileAnalysis = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.cbInSelection = new System.Windows.Forms.CheckBox();
+            this.cbMatchCase = new System.Windows.Forms.CheckBox();
             this.gbSearchMode = new System.Windows.Forms.GroupBox();
             this.rbPhrase = new System.Windows.Forms.RadioButton();
             this.rbOthers = new System.Windows.Forms.RadioButton();
@@ -103,29 +106,62 @@
             // 
             // gbLoadFile
             // 
+            this.gbLoadFile.Controls.Add(this.buttonFileAnalysis);
             this.gbLoadFile.Controls.Add(this.groupBox1);
             this.gbLoadFile.Controls.Add(this.gbInputFiles);
             this.gbLoadFile.Location = new System.Drawing.Point(9, 9);
             this.gbLoadFile.Margin = new System.Windows.Forms.Padding(2);
             this.gbLoadFile.Name = "gbLoadFile";
             this.gbLoadFile.Padding = new System.Windows.Forms.Padding(2);
-            this.gbLoadFile.Size = new System.Drawing.Size(533, 89);
+            this.gbLoadFile.Size = new System.Drawing.Size(533, 96);
             this.gbLoadFile.TabIndex = 12;
             this.gbLoadFile.TabStop = false;
             this.gbLoadFile.Text = "Search Engine";
             // 
+            // buttonFileAnalysis
+            // 
+            this.buttonFileAnalysis.Location = new System.Drawing.Point(5, 70);
+            this.buttonFileAnalysis.Name = "buttonFileAnalysis";
+            this.buttonFileAnalysis.Size = new System.Drawing.Size(95, 23);
+            this.buttonFileAnalysis.TabIndex = 5;
+            this.buttonFileAnalysis.Text = "Analysis";
+            this.buttonFileAnalysis.UseVisualStyleBackColor = true;
+            this.buttonFileAnalysis.Click += new System.EventHandler(this.buttonFileAnalysis_Click);
+            // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.cbInSelection);
+            this.groupBox1.Controls.Add(this.cbMatchCase);
             this.groupBox1.Controls.Add(this.gbSearchMode);
             this.groupBox1.Controls.Add(this.cbSerachContent);
             this.groupBox1.Controls.Add(this.labelQueryTitle);
             this.groupBox1.Controls.Add(this.buttonSearch);
-            this.groupBox1.Location = new System.Drawing.Point(126, 13);
+            this.groupBox1.Location = new System.Drawing.Point(106, 13);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(393, 71);
+            this.groupBox1.Size = new System.Drawing.Size(413, 78);
             this.groupBox1.TabIndex = 15;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Search ";
+            // 
+            // cbInSelection
+            // 
+            this.cbInSelection.AutoSize = true;
+            this.cbInSelection.Location = new System.Drawing.Point(295, 56);
+            this.cbInSelection.Name = "cbInSelection";
+            this.cbInSelection.Size = new System.Drawing.Size(79, 16);
+            this.cbInSelection.TabIndex = 17;
+            this.cbInSelection.Text = "In Selection";
+            this.cbInSelection.UseVisualStyleBackColor = true;
+            // 
+            // cbMatchCase
+            // 
+            this.cbMatchCase.AutoSize = true;
+            this.cbMatchCase.Location = new System.Drawing.Point(199, 56);
+            this.cbMatchCase.Name = "cbMatchCase";
+            this.cbMatchCase.Size = new System.Drawing.Size(78, 16);
+            this.cbMatchCase.TabIndex = 3;
+            this.cbMatchCase.Text = "Match Case";
+            this.cbMatchCase.UseVisualStyleBackColor = true;
             // 
             // gbSearchMode
             // 
@@ -134,7 +170,7 @@
             this.gbSearchMode.Controls.Add(this.rbWord);
             this.gbSearchMode.Location = new System.Drawing.Point(199, 11);
             this.gbSearchMode.Name = "gbSearchMode";
-            this.gbSearchMode.Size = new System.Drawing.Size(188, 47);
+            this.gbSearchMode.Size = new System.Drawing.Size(188, 43);
             this.gbSearchMode.TabIndex = 16;
             this.gbSearchMode.TabStop = false;
             this.gbSearchMode.Text = "Search Mode";
@@ -196,7 +232,7 @@
             // 
             // buttonSearch
             // 
-            this.buttonSearch.Location = new System.Drawing.Point(14, 42);
+            this.buttonSearch.Location = new System.Drawing.Point(12, 47);
             this.buttonSearch.Name = "buttonSearch";
             this.buttonSearch.Size = new System.Drawing.Size(75, 23);
             this.buttonSearch.TabIndex = 5;
@@ -207,9 +243,9 @@
             // gbInputFiles
             // 
             this.gbInputFiles.Controls.Add(this.buttonLoadFile);
-            this.gbInputFiles.Location = new System.Drawing.Point(14, 20);
+            this.gbInputFiles.Location = new System.Drawing.Point(5, 13);
             this.gbInputFiles.Name = "gbInputFiles";
-            this.gbInputFiles.Size = new System.Drawing.Size(95, 58);
+            this.gbInputFiles.Size = new System.Drawing.Size(95, 55);
             this.gbInputFiles.TabIndex = 6;
             this.gbInputFiles.TabStop = false;
             this.gbInputFiles.Text = "Input File (*.xml , *.json)";
@@ -264,5 +300,8 @@
         private System.Windows.Forms.RadioButton rbPhrase;
         private System.Windows.Forms.RadioButton rbOthers;
         private System.Windows.Forms.RadioButton rbWord;
+        private System.Windows.Forms.CheckBox cbMatchCase;
+        private System.Windows.Forms.CheckBox cbInSelection;
+        private System.Windows.Forms.Button buttonFileAnalysis;
     }
 }

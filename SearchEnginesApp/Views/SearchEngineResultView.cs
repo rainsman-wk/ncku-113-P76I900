@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Runtime.Remoting.Contexts;
+using System.Security.Policy;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -21,8 +22,8 @@ namespace SearchEnginesApp.Views
 {
     public partial class SearchEngineResultView : UserControl
     {
-        private readonly SearchEnginePresenter _presenter;
-        public SearchEngineResultView(SearchEnginePresenter presenter)
+        private readonly SearchEngineResultPresenter _presenter;
+        public SearchEngineResultView(SearchEngineResultPresenter presenter)
         {
             InitializeComponent();
             _presenter = presenter;
@@ -33,8 +34,6 @@ namespace SearchEnginesApp.Views
         public void UpdateFileList(List<string> Name, List<FileContent> filedata)
         {
             ResetResultViewPage();
-            
-
             if (Name.Count == filedata.Count )
             {
                 for (int i = 0; i < filedata.Count; i++)
@@ -46,7 +45,7 @@ namespace SearchEnginesApp.Views
             }
         }
         
-        public void LoadSelectContent(List<string> Name, List<FileContent> filedata, KeywordArg keywordarg)
+        public void LoadSelectContent(List<string> Name, List<FileContent> filedata)
         {
             int selectidx = BooksDataGridView.SelectedRows.Count;
             string selectfile = GetSelectFile(selectidx);
@@ -62,37 +61,31 @@ namespace SearchEnginesApp.Views
                     richTextBoxFileContent.Text = content;
                 }
             }
-            HighlightKeywords(keywordarg, Color.Yellow);
         }
-        
-        
-        public void UpdateSearchResult(List<string> Name, List<FileContent> filedata, KeywordArg keywordarg)
+
+        public void UpdateFileSearchResult(List<string> Name, List<FileContent> filedata, KeywordArg keywordarg)
         {
             // Keyword Seraching in Files
             int selectidx = BooksDataGridView.SelectedRows.Count;
-            string selectfile = GetSelectFile(selectidx);
-            string content = String.Empty;
-            string text = richTextBoxFileContent.Text;
 
+            StringComparison checkoption = (keywordarg.MatchCase) ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
             switch (keywordarg.Mode)
             {
                 case SearchMode.Word:
                     foreach (var word in filedata[selectidx].Word)
-                    {
-                        // TODO : use word arrary, no fix index
-                        if (word.Equals(keywordarg.Keywords[0], StringComparison.OrdinalIgnoreCase))
+                    {   // TODO : use word arrary, no fix index
+                        if (word.Equals(keywordarg.Keywords[0], checkoption))
                         {
-                            HighlightRows(Name[selectidx], Color.LightGreen);
+                            HighlightKeyword_FileRows(Name[selectidx], Color.LightGreen);
                         }
                     }
                     break;
                 case SearchMode.Phrase:
                     foreach (var phrase in filedata[selectidx].Sentence)
-                    {
-                        // TODO : use phrase arrary, no fix index
-                        if (phrase.Contains(keywordarg.Keywords[0]))
+                    {   // TODO : use phrase arrary, no fix index
+                        if (phrase.Equals(keywordarg.Keywords[0], checkoption))
                         {
-                            HighlightRows(Name[selectidx], Color.YellowGreen);
+                            HighlightKeyword_FileRows(Name[selectidx], Color.YellowGreen);
                         }
                     }
                     break;
@@ -101,13 +94,21 @@ namespace SearchEnginesApp.Views
                     foreach (var others in filedata[selectidx].Content)
                     {
                         // TODO : use no limit arrary, no fix index
-                        if (others.Contains(keywordarg.Keywords[0]))
+                        if (others.Equals(keywordarg.Keywords[0], checkoption))
                         {
-                            HighlightRows(Name[selectidx], Color.LightSeaGreen);
+                            HighlightKeyword_FileRows(Name[selectidx], Color.LightSeaGreen);
                         }
                     }
                     break;
             }
+        }
+
+        public void UpdateContentSearchResult(KeywordArg keywordarg)
+        {
+            //Reset Highlight Keywords
+            ResetHighlitKeywords(keywordarg.InSelection);
+            // Keyword Seraching in Files
+            HighlightKeywords_ContentPage(keywordarg, Color.Yellow);
         }
         
         #endregion View Feature
@@ -129,7 +130,7 @@ namespace SearchEnginesApp.Views
             UpdateLabelSearchResult(String.Empty, SystemColors.WindowText);
         }
 
-        public void HighlightRows(string keyword, Color color)
+        public void HighlightKeyword_FileRows(string keyword, Color color)
         {
             foreach (DataGridViewRow row in BooksDataGridView.Rows)
             {
@@ -163,38 +164,77 @@ namespace SearchEnginesApp.Views
             return filename;
         }
 
-        private void HighlightKeywords(KeywordArg keywordarg, Color color)
+
+        private void ResetHighlitKeywords(bool Inselection)
+        {
+            int start = richTextBoxFileContent.SelectionStart;
+            int length = richTextBoxFileContent.SelectionLength;
+
+            //Reset HighLight Keywords
+            richTextBoxFileContent.SelectAll();
+            richTextBoxFileContent.SelectionColor = Color.Black;
+            richTextBoxFileContent.SelectionBackColor = Color.White;
+            if (Inselection)
+            {
+                richTextBoxFileContent.Select(start, length);
+            }
+        }
+        private void HighlightKeywords_ContentPage(KeywordArg keywordarg, Color color)
         {
             int count = 0;
             Regex regex;
+            RegexOptions checkoption = (keywordarg.MatchCase) ? RegexOptions.None : RegexOptions.IgnoreCase;
+
+
             foreach (string keyword in keywordarg.Keywords)
             {
                 switch (keywordarg.Mode)
                 {
                     case SearchMode.Word:
                     case SearchMode.Phrase:
-                        regex = new Regex(@"\b" + Regex.Escape(keyword) + @"\b", RegexOptions.IgnoreCase);
+                        regex = new Regex(@"\b" + Regex.Escape(keyword) + @"\b", checkoption);
                         break;
                     case SearchMode.Others:
                     default:
                         // No limited Serch Mode
-                        regex = new Regex(keyword, RegexOptions.IgnoreCase);
+                        regex = new Regex(keyword, checkoption);
                         break;
                 }
-                MatchCollection matches = regex.Matches(richTextBoxFileContent.Text);
 
-                foreach (Match match in matches)
+                MatchCollection matches;
+                if (keywordarg.InSelection)
                 {
-                    richTextBoxFileContent.Select(match.Index, match.Length);
-                    richTextBoxFileContent.SelectionBackColor = color;
-                    count++;
-                }
-            }
+                    int selectstart = richTextBoxFileContent.SelectionStart;
+                    int selectLength = richTextBoxFileContent.SelectionLength;
 
+                    matches = regex.Matches(richTextBoxFileContent.SelectedText);
+                    foreach (Match match in matches)
+                    {
+                        richTextBoxFileContent.Select(match.Index+ selectstart, match.Length);
+                        richTextBoxFileContent.SelectionBackColor = color;
+                        count++;
+                    }
+                    richTextBoxFileContent.Select(selectstart, selectLength);
+                }
+                else
+                {
+                    matches = regex.Matches(richTextBoxFileContent.Text);
+                    foreach (Match match in matches)
+                    {
+                        richTextBoxFileContent.Select(match.Index , match.Length);
+                        richTextBoxFileContent.SelectionBackColor = color;
+                        count++;
+                    }
+                }
+
+                
+
+            }
 
             if (count == 0)
             {
                 UpdateLabelSearchResult(String.Empty, Color.Red);
+                UpdateFileSearchResultLabel(Color.Red,$"Keyword(s) not found");
             }
             else
             {
@@ -202,9 +242,17 @@ namespace SearchEnginesApp.Views
                 result += Environment.NewLine;
                 result += $"Counts : {count}" + Environment.NewLine;
                 UpdateLabelSearchResult(result, Color.Blue);
+                UpdateFileSearchResultLabel(Color.Blue, $"Count:{count} matches in entire file");
+
             }
         }
 
+        private void UpdateFileSearchResultLabel(Color color , String result)
+        {
+            // Deault Value : File Search Result: None
+            labelFileStatus.Text = result;
+            labelFileStatus.ForeColor = color;
+        }
     }
 
 }

@@ -86,6 +86,11 @@ namespace SearchEnginesApp.Views
 
         }
 
+        private void buttonFileAnalysis_Click(object sender, EventArgs e)
+        {
+            _presenter.FileAnalysis();
+        }
+
         private void buttonSearch_Click(object sender, EventArgs e)
         {
             if(_presenter.CheckFileSelected())
@@ -112,9 +117,17 @@ namespace SearchEnginesApp.Views
                             keywordArg.Mode = SearchMode.Others;
                             break;
                     }
+                    keywordArg.InSelection = cbInSelection.Checked;
+                    keywordArg.MatchCase = cbMatchCase.Checked;
                     _presenter.SetSearchKeyWord(keywordArg);
 
-                    _presenter.FileAnalysis();
+                    // Save Search Histroy
+                    string selectedItem = cbSerachContent.Text;
+                    if(!cbSerachContent.Items.Contains(selectedItem) && !string.IsNullOrWhiteSpace(selectedItem))
+                    {
+                        cbSerachContent.Items.Insert(0,selectedItem);
+                    }
+
                 }
                 else
                 {

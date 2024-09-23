@@ -27,10 +27,19 @@ namespace SearchEnginesApp
         {
             public SearchMode Mode { get; set; }
             public List<string> Keywords { get; set; }
+            public bool InSelection { get; set; }
+            public bool MatchCase { get; set; }
             public KeywordArg()
             {
                 Mode = SearchMode.Others;
                 Keywords = new List<string>();
+                InSelection = false;
+                MatchCase = false;
+            }
+            public KeywordArg (bool selection, bool matchcase)
+            {
+                InSelection = selection;
+                MatchCase = matchcase;
             }
         }
 
@@ -38,7 +47,8 @@ namespace SearchEnginesApp
         #region Event Handler...
         #region Event List..
         public event EventHandler<FileEventArgs> FilesLoaded;
-        public event EventHandler<SearchDataEventArgs> SearchResultLoaded;
+        public event EventHandler<FileAnalsisEventArgs> FileAnalysisLoaded;
+        public event EventHandler<KeywordEventArgs> SearchKeywordLoaded;
         #endregion Event List..
 
         #region File Event ..
@@ -69,28 +79,49 @@ namespace SearchEnginesApp
         }
         #endregion File Event ..
 
-        #region Search Data Event...
+        #region File Analsis Event...
+
+        #endregion File Analsis Event...
         public void SetEventUpdateSerchBook()
         {
-            OnGetSearchData(new SearchDataEventArgs(bookDataBase,keywordarg));
+            OnGetSearchData(new FileAnalsisEventArgs(bookDataBase));
         }
-        protected virtual void OnGetSearchData(SearchDataEventArgs e)
+        protected virtual void OnGetSearchData(FileAnalsisEventArgs e)
         {
-            SearchResultLoaded?.Invoke(this, e);
+            FileAnalysisLoaded?.Invoke(this, e);
         }
-        public class SearchDataEventArgs : EventArgs
+        public class FileAnalsisEventArgs : EventArgs
         {
             public List<SearchBooks> SearchData { get; }
-            public KeywordArg Keywordarg { get; }
 
-            public SearchDataEventArgs(List<SearchBooks> books, KeywordArg keywordarg)
+            public FileAnalsisEventArgs(List<SearchBooks> books)
             {
                 SearchData = books;
-                Keywordarg = keywordarg;
             }
         }
 
+        #region Search Data Event...
+        public void SetKeywordSearchEvent()
+        {
+            OnGetKeywordData(new KeywordEventArgs(keywords));
+        }
+        protected virtual void OnGetKeywordData(KeywordEventArgs e)
+        {
+            SearchKeywordLoaded?.Invoke(this, e);
+        }
+        public class KeywordEventArgs : EventArgs
+        {
+            public KeywordArg Keywordarg { get; }
+
+            public KeywordEventArgs(KeywordArg keywordarg)
+            {
+                Keywordarg = keywordarg;
+            }
+        }
         #endregion Search Data Event...
+
+
+
 
         #endregion Event Handler...
 
@@ -229,7 +260,7 @@ namespace SearchEnginesApp
         #region Private variables
         private List<SearchBooks> bookDataBase = new List<SearchBooks>();
         private List<FileBooks> filebooks = new List<FileBooks>();
-        private KeywordArg keywordarg = new KeywordArg();
+        private KeywordArg keywords = new KeywordArg();
 
         #endregion
 
@@ -293,7 +324,6 @@ namespace SearchEnginesApp
 
 
         #region Serach Book feature
-
         public void CleanSearchBooks()
         {
             bookDataBase.Clear();
@@ -307,10 +337,7 @@ namespace SearchEnginesApp
                 int idx = bookDataBase.Count - 1;
                 Console.WriteLine($"{DateTime.Now.ToString("yyyy-mm-dd HH:mm:ss.ss")} : DEBUG_MSG : bookDataBase [{Path.GetFileName(bookDataBase[idx].Path)}] Book [{Path.GetFileName(book.Path)}] ");
             }
-
 #endif
-
-
         }
         public bool RemoveSearchBooks(SearchBooks book)
         {
@@ -326,28 +353,34 @@ namespace SearchEnginesApp
             }
             return result;
         }
-
+        public List<SearchBooks> GetSerachBooks()
+        {
+            return bookDataBase;
+        }
+        #endregion Serach Book feature
+        #region Keyword feature...
         public void ResetSerchKeyword()
         {
-            keywordarg = new KeywordArg();
+            keywords = new KeywordArg();
         }
         public void SetSearchKeyword(KeywordArg keyword)
         {
-            keywordarg = keyword;
+            keywords = keyword;
         }
         public void SetSearchKeyword(List<string> keyword)
         {
-            keywordarg.Keywords = keyword;
+            keywords.Keywords = keyword;
         }
         public void SetSearchKeyword(SearchMode mode)
         {
-            keywordarg.Mode = mode;
+            keywords.Mode = mode;
         }
         public KeywordArg GetSearchKeyword()
         {
-            return keywordarg;
+            return keywords;
         }
-        #endregion Serach Book feature
+        #endregion Keyword feature...
+
 
     }
 

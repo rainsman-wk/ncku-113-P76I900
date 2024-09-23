@@ -41,6 +41,7 @@
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.richTextBoxFileContent = new System.Windows.Forms.RichTextBox();
+            this.labelFileStatus = new System.Windows.Forms.Label();
             this.GroupFileParser.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.BooksDataGridView)).BeginInit();
             this.groupBox2.SuspendLayout();
@@ -151,10 +152,11 @@
             // groupBox1
             // 
             this.groupBox1.AutoSize = true;
+            this.groupBox1.Controls.Add(this.labelFileStatus);
             this.groupBox1.Controls.Add(this.richTextBoxFileContent);
             this.groupBox1.Location = new System.Drawing.Point(3, 141);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(936, 340);
+            this.groupBox1.Size = new System.Drawing.Size(936, 341);
             this.groupBox1.TabIndex = 13;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "File Content";
@@ -165,9 +167,18 @@
             this.richTextBoxFileContent.Name = "richTextBoxFileContent";
             this.richTextBoxFileContent.ReadOnly = true;
             this.richTextBoxFileContent.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedBoth;
-            this.richTextBoxFileContent.Size = new System.Drawing.Size(917, 298);
+            this.richTextBoxFileContent.Size = new System.Drawing.Size(917, 277);
             this.richTextBoxFileContent.TabIndex = 9;
             this.richTextBoxFileContent.Text = "";
+            // 
+            // labelFileStatus
+            // 
+            this.labelFileStatus.AutoSize = true;
+            this.labelFileStatus.Location = new System.Drawing.Point(15, 311);
+            this.labelFileStatus.Name = "labelFileStatus";
+            this.labelFileStatus.Size = new System.Drawing.Size(122, 12);
+            this.labelFileStatus.TabIndex = 10;
+            this.labelFileStatus.Text = "File Search Result : None";
             // 
             // SearchEngineResultView
             // 
@@ -179,12 +190,13 @@
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.GroupFileParser);
             this.Name = "SearchEngineResultView";
-            this.Size = new System.Drawing.Size(960, 484);
+            this.Size = new System.Drawing.Size(960, 485);
             this.GroupFileParser.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.BooksDataGridView)).EndInit();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -204,5 +216,6 @@
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.RichTextBox richTextBoxFileContent;
+        private System.Windows.Forms.Label labelFileStatus;
     }
 }
