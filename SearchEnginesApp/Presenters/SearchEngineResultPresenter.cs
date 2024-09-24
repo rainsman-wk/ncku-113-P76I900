@@ -128,6 +128,11 @@ namespace SearchEnginesApp.Presenters
             }
             return page;
         }
+        public KeywordArg GetKeyword()
+        {
+            KeywordArg keywordarg = _toolModel.GetSearchKeyword();
+            return keywordarg;
+        }
 
     }
 
