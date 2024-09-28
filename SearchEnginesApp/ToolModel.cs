@@ -193,15 +193,23 @@ namespace SearchEnginesApp
         ///   - Sentence
         public class FileContent
         {
-            public List<string> Content { get; set; }
+            public string Pmid {  get; set; }
+            public string Title {  get; set; }
+            public string Journal {  get; set; }
+
+            public List<string> Abstract { get; set; }
             public List<string> Word { get; set; }
             public List<string> Sentence { get; set; }
 
             public FileContent()
             {
-                Content = new List<string>();
+                Abstract = new List<string>();
                 Word = new List<string>();
                 Sentence = new List<string>();
+                // New Feature Added
+                Title = string.Empty;
+                Pmid = string.Empty;
+                Journal = string.Empty;
             }
             public int WordsCount()
             {
@@ -211,51 +219,45 @@ namespace SearchEnginesApp
             {
                 return Sentence.Count;
             }
-            public int ContentCount()
+            public int AbstractCount()
             {
                 int count = 0;
-                foreach (var value in Content)
+                foreach (var value in Abstract)
                 {
                     count+= value.Count();
                 }
                 return count;
             }
-            public int ContentCountNoSpace()
+            public int AbstractCountNoSpace()
             {
                 int count = 0;
-                foreach (var value in Content)
+                foreach (var value in Abstract)
                 {
                     count += value.Replace(" ", "").Count();
                 }
                 return count;
             }
-            public int NonAsciiChar()
+            public int AbstractCountNonAsciiChar()
             {
                 int count = 0;
                 // Set Non ASCII Char Pattern
                 string pattern = @"[^\u0000-\u007F]";
-                foreach (var value in Content)
+                foreach (var value in Abstract)
                 {
                     MatchCollection matches = Regex.Matches(value, pattern);
                     count += matches.Count;
-#if (DEBUG)
-                    Console.WriteLine($"{DateTime.Now.ToString("yyyy-mm-dd HH:mm:ss.ss")} : DEBUG_MSG : NonAsciiChar : {matches.Count}");
-#endif
                 }
                 return count;
             }
-            public int NonAsciiWord()
+            public int AbstractCountNonAsciiWord()
             {
                 int count = 0;
                 // Set Non ASCII Word Pattern
                 string pattern = @"\b\w*[^\u0000-\u007F]+\w*\b";
-                foreach (var value in Content)
+                foreach (var value in Abstract)
                 {
                     MatchCollection matches = Regex.Matches(value, pattern);
                     count += matches.Count;
-#if (DEBUG)
-                    Console.WriteLine($"{DateTime.Now.ToString("yyyy-mm-dd HH:mm:ss.ss")} : DEBUG_MSG : NonAsciiWord : {matches.Count}");
-#endif
                 }
                 return count;
             }
@@ -284,11 +286,11 @@ namespace SearchEnginesApp
             file.CheckedState = false;
             filebooks.Add(file);
         }
-        public void UpdateFileState(string value, bool check)
+        public void UpdateFileState(string name, bool check)
         {
             foreach (var list in filebooks)
             {
-                if (Path.GetFileNameWithoutExtension(list.File) == value)
+                if (Path.GetFileNameWithoutExtension(list.File) == name)
                 {
                     list.CheckedState = check;
                     break;

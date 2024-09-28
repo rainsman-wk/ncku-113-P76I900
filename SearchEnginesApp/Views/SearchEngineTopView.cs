@@ -25,6 +25,8 @@ namespace SearchEnginesApp.Views
         {
             InitializeComponent();
             _presenter = presenter;
+
+
         }
 
         private async void buttonGetXmlFile_Click(object sender, EventArgs e)
@@ -147,6 +149,8 @@ namespace SearchEnginesApp.Views
         }
         private void KeyWordStringCheck(string text)
         {
+            bool inputfail = false;
+            List<string> checkstring = new List<string>();
             if (string.IsNullOrEmpty(text))
             {
                 cbSerachContent.ForeColor = Color.Black;
@@ -156,17 +160,36 @@ namespace SearchEnginesApp.Views
                 switch (CheckRadioButtonState())
                 {
                     case "Word":
-                        cbSerachContent.ForeColor = (Regex.IsMatch(text, @"^\S+$")) ? Color.Blue : Color.Red;
+                        checkstring = text.Split(',',' ').ToList();
+                        if(checkstring.Count>0)
+                        {
+                            foreach(string s in checkstring)
+                            {
+                                if(Regex.IsMatch(s, @"^\S+$") == false) { inputfail |= true; }
+                            }
+                        }
                         break;
                     case "Phrase":
-                        cbSerachContent.ForeColor = (Regex.IsMatch(text, @"\s")) ? Color.Blue : Color.Red;
+                        checkstring = text.Split(',').ToList();
+                        if (checkstring.Count > 0)
+                        {
+                            foreach (string s in checkstring)
+                            {
+                                if (Regex.IsMatch(s, @"\s") == false) { inputfail |= true; }
+
+                            }
+                        }
                         break;
                     default:
                         cbSerachContent.ForeColor = Color.Black;
                         break;
                 }
+
+                cbSerachContent.ForeColor = (inputfail) ? Color.Red : Color.Blue;
+
             }
         }
+
         private string CheckRadioButtonState()
         {
             string selectBtn = string.Empty;

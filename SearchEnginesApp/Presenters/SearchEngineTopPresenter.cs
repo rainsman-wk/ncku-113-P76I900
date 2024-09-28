@@ -1,12 +1,14 @@
 ﻿using SearchEnginesApp.Views;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml;
 using System.Xml.Linq;
 using static SearchEnginesApp.ToolModel;
 using static SearchEnginesApp.Views.SearchEngineResultView;
@@ -57,19 +59,27 @@ namespace SearchEnginesApp.Presenters
             FileContent context = new FileContent();
             if (File.Exists(path))
             {
-                XDocument doc = XDocument.Load(path);
-                var abstracts = doc.Descendants("Abstract").Descendants("AbstractText").Select(element => element.Value);
-                foreach (string text in abstracts)
+                XmlDocument file = new XmlDocument();
+                file.Load(path);
+ 
+                XmlNodeList articleNodes = file.SelectNodes("//PubmedArticle");
+                foreach (XmlNode articleNode in articleNodes)
                 {
-                    context.Content.Add(text);
+                    context.Title = articleNode.SelectSingleNode("MedlineCitation/Article/ArticleTitle")?.InnerText;
+                    XmlNodeList abstractNodes = articleNode.SelectNodes("MedlineCitation/Article/Abstract/AbstractText");
+                    context.Abstract.AddRange(abstractNodes.Cast<XmlNode>().Select(node => node.InnerText));
+                    context.Journal = articleNode.SelectSingleNode("MedlineCitation/Article/Journal/Title")?.InnerText;
+                    context.Pmid = articleNode.SelectSingleNode("MedlineCitation/PMID")?.InnerText;
+                }
+                foreach(var text in context.Abstract)
+                {
                     context.Word.AddRange(text.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).ToList());
                     context.Sentence.AddRange(text.Split(new[] { '.', '!', '?' }, StringSplitOptions.RemoveEmptyEntries).ToList());
                 }
             }
             return context;
         }
-
-
+ 
         public void ResetBookDatabase()
         {
             _toolModel.ClearFileList();
@@ -105,7 +115,7 @@ namespace SearchEnginesApp.Presenters
             for(int i = 0; i< searchlist.Count; i++)
             {
                 books.Add(new SearchBooks(searchlist[i], GetXmlContent(searchlist[i])));
-             }
+            }
             // Trigger Event to other view to update Serach book
             _toolModel.SetEventUpdateSerchBook(books);
         }

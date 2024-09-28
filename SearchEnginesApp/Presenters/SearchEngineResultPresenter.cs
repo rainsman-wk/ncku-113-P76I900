@@ -37,8 +37,6 @@ namespace SearchEnginesApp.Presenters
         #region Handler
         private void ToolModel_FileAnalysisEventReceived(object sender, FileAnalsisEventArgs e)
         {
-            View.ResetResultViewPage();
-
             if(e.SearchData.Count > 0 )
             {
                 List<SearchBooks> serachdata = e.SearchData;
@@ -51,12 +49,8 @@ namespace SearchEnginesApp.Presenters
                     // Add File Contents
                     contents.Add(book.Content);
                 }
-
                 // Update View File List
                 View.UpdateFileList(names, contents);
-
-                // Upload Select File Content
-                View.LoadSelectContent(names, contents);
             }
             else
             {
@@ -85,8 +79,6 @@ namespace SearchEnginesApp.Presenters
                     // Update Label Result
 
                     View.UpdateFileSearchResult(names, contents, keywordarg);
-
-                    View.UpdateContentSearchResult(keywordarg);
                 }
             }
 
@@ -120,16 +112,10 @@ namespace SearchEnginesApp.Presenters
             if (View != null && !View.IsDisposed) View.Dispose();
         }
         #endregion View realted...
-        public string GetFileContent(string name)
+        public FileContent GetFileContent(string name)
         {
-            string page = string.Empty;
             FileContent file = _toolModel.GetSearchBookContent(name);
-
-            for (int i = 0; i < file.Content.Count; i++)
-            {
-                page += file.Content[i] + Environment.NewLine;
-            }
-            return page;
+            return file;
         }
         public KeywordArg GetKeyword()
         {

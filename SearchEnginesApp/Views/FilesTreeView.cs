@@ -64,6 +64,14 @@ namespace SearchEnginesApp.Views
                 {
                     node.Checked = true;
                 }
+                if(node.Nodes.Count>0)
+                {
+                    for(int i = 0; i< node.Nodes.Count;i++)
+                    {
+                        node.Nodes[i].Checked = true;
+                        _presenter.SaveSelectFileState(node.Nodes[i].Text,true);
+                    }
+                }
             }
 
         }

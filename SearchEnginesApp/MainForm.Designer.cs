@@ -41,14 +41,14 @@
             // splitContainer1
             // 
             this.splitContainer1.Location = new System.Drawing.Point(8, 119);
-            this.splitContainer1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.splitContainer1.Margin = new System.Windows.Forms.Padding(2);
             this.splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.tbSeachView);
-            this.splitContainer1.Size = new System.Drawing.Size(1245, 519);
-            this.splitContainer1.SplitterDistance = 212;
+            this.splitContainer1.Size = new System.Drawing.Size(975, 297);
+            this.splitContainer1.SplitterDistance = 179;
             this.splitContainer1.SplitterWidth = 3;
             this.splitContainer1.TabIndex = 1;
             // 
@@ -56,20 +56,20 @@
             // 
             this.tbSeachView.Controls.Add(this.tpSearchResult);
             this.tbSeachView.Location = new System.Drawing.Point(2, 2);
-            this.tbSeachView.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tbSeachView.Margin = new System.Windows.Forms.Padding(2);
             this.tbSeachView.Name = "tbSeachView";
             this.tbSeachView.SelectedIndex = 0;
-            this.tbSeachView.Size = new System.Drawing.Size(1024, 512);
+            this.tbSeachView.Size = new System.Drawing.Size(789, 293);
             this.tbSeachView.TabIndex = 0;
             // 
             // tpSearchResult
             // 
             this.tpSearchResult.AutoScroll = true;
             this.tpSearchResult.Location = new System.Drawing.Point(4, 22);
-            this.tpSearchResult.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tpSearchResult.Margin = new System.Windows.Forms.Padding(2);
             this.tpSearchResult.Name = "tpSearchResult";
-            this.tpSearchResult.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.tpSearchResult.Size = new System.Drawing.Size(1016, 486);
+            this.tpSearchResult.Padding = new System.Windows.Forms.Padding(2);
+            this.tpSearchResult.Size = new System.Drawing.Size(781, 267);
             this.tpSearchResult.TabIndex = 0;
             this.tpSearchResult.Text = "SearchResult";
             this.tpSearchResult.UseVisualStyleBackColor = true;
@@ -77,16 +77,16 @@
             // MainTopView
             // 
             this.MainTopView.Location = new System.Drawing.Point(8, 8);
-            this.MainTopView.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.MainTopView.Margin = new System.Windows.Forms.Padding(2);
             this.MainTopView.Name = "MainTopView";
-            this.MainTopView.Size = new System.Drawing.Size(1245, 107);
+            this.MainTopView.Size = new System.Drawing.Size(975, 107);
             this.MainTopView.TabIndex = 2;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1264, 681);
+            this.ClientSize = new System.Drawing.Size(991, 424);
             this.Controls.Add(this.MainTopView);
             this.Controls.Add(this.splitContainer1);
             this.Name = "MainForm";

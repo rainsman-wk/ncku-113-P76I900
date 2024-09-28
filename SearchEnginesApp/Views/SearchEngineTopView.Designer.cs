@@ -1,4 +1,7 @@
-﻿namespace SearchEnginesApp.Views
+﻿using System.Drawing;
+using System.Windows.Forms;
+
+namespace SearchEnginesApp.Views
 {
     partial class SearchEngineTopView
     {
@@ -21,13 +24,13 @@
         }
 
         #region Component Designer generated code
-
         /// <summary> 
         /// Required method for Designer support - do not modify 
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.gbXmlLoader = new System.Windows.Forms.GroupBox();
             this.linkLabelPubmed = new System.Windows.Forms.LinkLabel();
             this.labelPMID = new System.Windows.Forms.Label();
@@ -47,6 +50,9 @@
             this.buttonSearch = new System.Windows.Forms.Button();
             this.gbInputFiles = new System.Windows.Forms.GroupBox();
             this.buttonLoadFile = new System.Windows.Forms.Button();
+            this.tipPhrase = new System.Windows.Forms.ToolTip(this.components);
+            this.tipOthers = new System.Windows.Forms.ToolTip(this.components);
+            this.tipWord = new System.Windows.Forms.ToolTip(this.components);
             this.gbXmlLoader.SuspendLayout();
             this.gbLoadFile.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -62,11 +68,9 @@
             this.gbXmlLoader.Controls.Add(this.labelPMID);
             this.gbXmlLoader.Controls.Add(this.buttonGetXmlFile);
             this.gbXmlLoader.Controls.Add(this.pmidTextBox);
-            this.gbXmlLoader.Location = new System.Drawing.Point(820, 16);
-            this.gbXmlLoader.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.gbXmlLoader.Location = new System.Drawing.Point(547, 11);
             this.gbXmlLoader.Name = "gbXmlLoader";
-            this.gbXmlLoader.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.gbXmlLoader.Size = new System.Drawing.Size(363, 128);
+            this.gbXmlLoader.Size = new System.Drawing.Size(243, 87);
             this.gbXmlLoader.TabIndex = 11;
             this.gbXmlLoader.TabStop = false;
             this.gbXmlLoader.Text = "Pubmed Xml Loader";
@@ -74,10 +78,9 @@
             // linkLabelPubmed
             // 
             this.linkLabelPubmed.AutoSize = true;
-            this.linkLabelPubmed.Location = new System.Drawing.Point(26, 27);
-            this.linkLabelPubmed.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.linkLabelPubmed.Location = new System.Drawing.Point(17, 18);
             this.linkLabelPubmed.Name = "linkLabelPubmed";
-            this.linkLabelPubmed.Size = new System.Drawing.Size(230, 18);
+            this.linkLabelPubmed.Size = new System.Drawing.Size(160, 12);
             this.linkLabelPubmed.TabIndex = 11;
             this.linkLabelPubmed.TabStop = true;
             this.linkLabelPubmed.Text = "https://pubmed.ncbi.nlm.nih.gov/";
@@ -85,19 +88,17 @@
             // labelPMID
             // 
             this.labelPMID.AutoSize = true;
-            this.labelPMID.Location = new System.Drawing.Point(26, 69);
-            this.labelPMID.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.labelPMID.Location = new System.Drawing.Point(17, 46);
             this.labelPMID.Name = "labelPMID";
-            this.labelPMID.Size = new System.Drawing.Size(50, 18);
+            this.labelPMID.Size = new System.Drawing.Size(33, 12);
             this.labelPMID.TabIndex = 10;
             this.labelPMID.Text = "PMID";
             // 
             // buttonGetXmlFile
             // 
-            this.buttonGetXmlFile.Location = new System.Drawing.Point(243, 64);
-            this.buttonGetXmlFile.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.buttonGetXmlFile.Location = new System.Drawing.Point(162, 43);
             this.buttonGetXmlFile.Name = "buttonGetXmlFile";
-            this.buttonGetXmlFile.Size = new System.Drawing.Size(112, 34);
+            this.buttonGetXmlFile.Size = new System.Drawing.Size(75, 23);
             this.buttonGetXmlFile.TabIndex = 9;
             this.buttonGetXmlFile.Text = "Get ";
             this.buttonGetXmlFile.UseVisualStyleBackColor = true;
@@ -105,10 +106,9 @@
             // 
             // pmidTextBox
             // 
-            this.pmidTextBox.Location = new System.Drawing.Point(84, 64);
-            this.pmidTextBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.pmidTextBox.Location = new System.Drawing.Point(56, 43);
             this.pmidTextBox.Name = "pmidTextBox";
-            this.pmidTextBox.Size = new System.Drawing.Size(148, 29);
+            this.pmidTextBox.Size = new System.Drawing.Size(100, 22);
             this.pmidTextBox.TabIndex = 8;
             // 
             // gbLoadFile
@@ -116,19 +116,20 @@
             this.gbLoadFile.Controls.Add(this.buttonFileAnalysis);
             this.gbLoadFile.Controls.Add(this.groupBox1);
             this.gbLoadFile.Controls.Add(this.gbInputFiles);
-            this.gbLoadFile.Location = new System.Drawing.Point(14, 14);
+            this.gbLoadFile.Location = new System.Drawing.Point(9, 9);
+            this.gbLoadFile.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.gbLoadFile.Name = "gbLoadFile";
-            this.gbLoadFile.Size = new System.Drawing.Size(800, 144);
+            this.gbLoadFile.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.gbLoadFile.Size = new System.Drawing.Size(533, 96);
             this.gbLoadFile.TabIndex = 12;
             this.gbLoadFile.TabStop = false;
             this.gbLoadFile.Text = "Search Engine";
             // 
             // buttonFileAnalysis
             // 
-            this.buttonFileAnalysis.Location = new System.Drawing.Point(8, 105);
-            this.buttonFileAnalysis.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.buttonFileAnalysis.Location = new System.Drawing.Point(5, 70);
             this.buttonFileAnalysis.Name = "buttonFileAnalysis";
-            this.buttonFileAnalysis.Size = new System.Drawing.Size(142, 34);
+            this.buttonFileAnalysis.Size = new System.Drawing.Size(95, 23);
             this.buttonFileAnalysis.TabIndex = 5;
             this.buttonFileAnalysis.Text = "Analysis";
             this.buttonFileAnalysis.UseVisualStyleBackColor = true;
@@ -142,11 +143,9 @@
             this.groupBox1.Controls.Add(this.cbSerachContent);
             this.groupBox1.Controls.Add(this.labelQueryTitle);
             this.groupBox1.Controls.Add(this.buttonSearch);
-            this.groupBox1.Location = new System.Drawing.Point(159, 20);
-            this.groupBox1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox1.Location = new System.Drawing.Point(106, 13);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.groupBox1.Size = new System.Drawing.Size(620, 117);
+            this.groupBox1.Size = new System.Drawing.Size(413, 78);
             this.groupBox1.TabIndex = 15;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Search ";
@@ -154,21 +153,21 @@
             // cbInSelection
             // 
             this.cbInSelection.AutoSize = true;
-            this.cbInSelection.Location = new System.Drawing.Point(442, 84);
-            this.cbInSelection.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.cbInSelection.Enabled = false;
+            this.cbInSelection.Location = new System.Drawing.Point(295, 56);
             this.cbInSelection.Name = "cbInSelection";
-            this.cbInSelection.Size = new System.Drawing.Size(117, 22);
+            this.cbInSelection.Size = new System.Drawing.Size(79, 16);
             this.cbInSelection.TabIndex = 17;
             this.cbInSelection.Text = "In Selection";
             this.cbInSelection.UseVisualStyleBackColor = true;
+            this.cbInSelection.Visible = false;
             // 
             // cbMatchCase
             // 
             this.cbMatchCase.AutoSize = true;
-            this.cbMatchCase.Location = new System.Drawing.Point(298, 84);
-            this.cbMatchCase.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.cbMatchCase.Location = new System.Drawing.Point(199, 56);
             this.cbMatchCase.Name = "cbMatchCase";
-            this.cbMatchCase.Size = new System.Drawing.Size(117, 22);
+            this.cbMatchCase.Size = new System.Drawing.Size(78, 16);
             this.cbMatchCase.TabIndex = 3;
             this.cbMatchCase.Text = "Match Case";
             this.cbMatchCase.UseVisualStyleBackColor = true;
@@ -178,11 +177,9 @@
             this.gbSearchMode.Controls.Add(this.rbPhrase);
             this.gbSearchMode.Controls.Add(this.rbOthers);
             this.gbSearchMode.Controls.Add(this.rbWord);
-            this.gbSearchMode.Location = new System.Drawing.Point(298, 16);
-            this.gbSearchMode.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.gbSearchMode.Location = new System.Drawing.Point(199, 11);
             this.gbSearchMode.Name = "gbSearchMode";
-            this.gbSearchMode.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.gbSearchMode.Size = new System.Drawing.Size(282, 64);
+            this.gbSearchMode.Size = new System.Drawing.Size(188, 43);
             this.gbSearchMode.TabIndex = 16;
             this.gbSearchMode.TabStop = false;
             this.gbSearchMode.Text = "Search Mode";
@@ -190,13 +187,13 @@
             // rbPhrase
             // 
             this.rbPhrase.AutoSize = true;
-            this.rbPhrase.Location = new System.Drawing.Point(93, 30);
-            this.rbPhrase.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.rbPhrase.Location = new System.Drawing.Point(62, 20);
             this.rbPhrase.Name = "rbPhrase";
-            this.rbPhrase.Size = new System.Drawing.Size(79, 22);
+            this.rbPhrase.Size = new System.Drawing.Size(53, 16);
             this.rbPhrase.TabIndex = 2;
             this.rbPhrase.TabStop = true;
             this.rbPhrase.Text = "Phrase";
+            this.tipPhrase.SetToolTip(this.rbPhrase, "Spilt Text by comma");
             this.rbPhrase.UseVisualStyleBackColor = true;
             this.rbPhrase.CheckedChanged += new System.EventHandler(this.SearchMode_CheckedChanged);
             // 
@@ -204,55 +201,52 @@
             // 
             this.rbOthers.AutoSize = true;
             this.rbOthers.Checked = true;
-            this.rbOthers.Location = new System.Drawing.Point(182, 30);
-            this.rbOthers.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.rbOthers.Location = new System.Drawing.Point(121, 20);
             this.rbOthers.Name = "rbOthers";
-            this.rbOthers.Size = new System.Drawing.Size(79, 22);
+            this.rbOthers.Size = new System.Drawing.Size(53, 16);
             this.rbOthers.TabIndex = 1;
             this.rbOthers.TabStop = true;
             this.rbOthers.Text = "Others";
+            this.tipOthers.SetToolTip(this.rbOthers, "Full Text Searching");
             this.rbOthers.UseVisualStyleBackColor = true;
             this.rbOthers.CheckedChanged += new System.EventHandler(this.SearchMode_CheckedChanged);
             // 
             // rbWord
             // 
             this.rbWord.AutoSize = true;
-            this.rbWord.Location = new System.Drawing.Point(9, 30);
-            this.rbWord.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.rbWord.Location = new System.Drawing.Point(6, 20);
             this.rbWord.Name = "rbWord";
-            this.rbWord.Size = new System.Drawing.Size(71, 22);
+            this.rbWord.Size = new System.Drawing.Size(50, 16);
             this.rbWord.TabIndex = 0;
             this.rbWord.TabStop = true;
             this.rbWord.Text = "Word";
+            this.tipWord.SetToolTip(this.rbWord, "Spilt Text by space or comma");
             this.rbWord.UseVisualStyleBackColor = true;
             this.rbWord.CheckedChanged += new System.EventHandler(this.SearchMode_CheckedChanged);
             // 
             // cbSerachContent
             // 
             this.cbSerachContent.FormattingEnabled = true;
-            this.cbSerachContent.Location = new System.Drawing.Point(108, 32);
-            this.cbSerachContent.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.cbSerachContent.Location = new System.Drawing.Point(72, 21);
             this.cbSerachContent.Name = "cbSerachContent";
-            this.cbSerachContent.Size = new System.Drawing.Size(180, 26);
+            this.cbSerachContent.Size = new System.Drawing.Size(121, 20);
             this.cbSerachContent.TabIndex = 15;
             this.cbSerachContent.TextUpdate += new System.EventHandler(this.cbSerachContent_TextUpdate);
             // 
             // labelQueryTitle
             // 
             this.labelQueryTitle.AutoSize = true;
-            this.labelQueryTitle.Location = new System.Drawing.Point(18, 39);
-            this.labelQueryTitle.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.labelQueryTitle.Location = new System.Drawing.Point(12, 26);
             this.labelQueryTitle.Name = "labelQueryTitle";
-            this.labelQueryTitle.Size = new System.Drawing.Size(82, 18);
+            this.labelQueryTitle.Size = new System.Drawing.Size(54, 12);
             this.labelQueryTitle.TabIndex = 13;
             this.labelQueryTitle.Text = "File Query";
             // 
             // buttonSearch
             // 
-            this.buttonSearch.Location = new System.Drawing.Point(18, 70);
-            this.buttonSearch.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.buttonSearch.Location = new System.Drawing.Point(12, 47);
             this.buttonSearch.Name = "buttonSearch";
-            this.buttonSearch.Size = new System.Drawing.Size(112, 34);
+            this.buttonSearch.Size = new System.Drawing.Size(75, 23);
             this.buttonSearch.TabIndex = 5;
             this.buttonSearch.Text = "Seach";
             this.buttonSearch.UseVisualStyleBackColor = true;
@@ -261,34 +255,44 @@
             // gbInputFiles
             // 
             this.gbInputFiles.Controls.Add(this.buttonLoadFile);
-            this.gbInputFiles.Location = new System.Drawing.Point(8, 20);
-            this.gbInputFiles.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.gbInputFiles.Location = new System.Drawing.Point(5, 13);
             this.gbInputFiles.Name = "gbInputFiles";
-            this.gbInputFiles.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.gbInputFiles.Size = new System.Drawing.Size(142, 82);
+            this.gbInputFiles.Size = new System.Drawing.Size(95, 55);
             this.gbInputFiles.TabIndex = 6;
             this.gbInputFiles.TabStop = false;
             this.gbInputFiles.Text = "Input File (*.xml , *.json)";
             // 
             // buttonLoadFile
             // 
-            this.buttonLoadFile.Location = new System.Drawing.Point(9, 42);
-            this.buttonLoadFile.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.buttonLoadFile.Location = new System.Drawing.Point(6, 28);
             this.buttonLoadFile.Name = "buttonLoadFile";
-            this.buttonLoadFile.Size = new System.Drawing.Size(112, 34);
+            this.buttonLoadFile.Size = new System.Drawing.Size(75, 23);
             this.buttonLoadFile.TabIndex = 4;
             this.buttonLoadFile.Text = "Load";
             this.buttonLoadFile.UseVisualStyleBackColor = true;
             this.buttonLoadFile.Click += new System.EventHandler(this.buttonLoadFile_Click);
             // 
+            // tipPhrase
+            // 
+            this.tipPhrase.BackColor = System.Drawing.Color.LightBlue;
+            // 
+            // tipOthers
+            // 
+            this.tipOthers.BackColor = System.Drawing.Color.LightBlue;
+            // 
+            // tipWord
+            // 
+            this.tipWord.BackColor = System.Drawing.Color.LightBlue;
+            // 
             // SearchEngineTopView
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.gbLoadFile);
             this.Controls.Add(this.gbXmlLoader);
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "SearchEngineTopView";
-            this.Size = new System.Drawing.Size(1200, 160);
+            this.Size = new System.Drawing.Size(800, 107);
             this.gbXmlLoader.ResumeLayout(false);
             this.gbXmlLoader.PerformLayout();
             this.gbLoadFile.ResumeLayout(false);
@@ -318,8 +322,11 @@
         private System.Windows.Forms.ComboBox cbSerachContent;
         private System.Windows.Forms.GroupBox gbSearchMode;
         private System.Windows.Forms.RadioButton rbPhrase;
+        private System.Windows.Forms.ToolTip tipPhrase;
         private System.Windows.Forms.RadioButton rbOthers;
+        private System.Windows.Forms.ToolTip tipOthers;
         private System.Windows.Forms.RadioButton rbWord;
+        private System.Windows.Forms.ToolTip tipWord;
         private System.Windows.Forms.CheckBox cbMatchCase;
         private System.Windows.Forms.CheckBox cbInSelection;
         private System.Windows.Forms.Button buttonFileAnalysis;

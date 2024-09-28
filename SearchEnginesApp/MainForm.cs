@@ -48,8 +48,5 @@ namespace SearchEnginesApp
             splitContainer1.Panel1.Controls.Add(_FilesTreePresenter.ShowView());
 
         }
-
-
-
     }
 }
