@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.GroupFileParser = new System.Windows.Forms.GroupBox();
+            this.labelFileSearchResult = new System.Windows.Forms.Label();
             this.BooksDataGridView = new System.Windows.Forms.DataGridView();
             this.FileName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.NrCharIncludingSpaces = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -42,7 +43,6 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.labelPageSearchResult = new System.Windows.Forms.Label();
             this.richTextBoxFileContent = new System.Windows.Forms.RichTextBox();
-            this.labelFileSearchResult = new System.Windows.Forms.Label();
             this.GroupFileParser.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.BooksDataGridView)).BeginInit();
             this.groupBox2.SuspendLayout();
@@ -60,6 +60,15 @@
             this.GroupFileParser.TabIndex = 11;
             this.GroupFileParser.TabStop = false;
             this.GroupFileParser.Text = "Files Parser";
+            // 
+            // labelFileSearchResult
+            // 
+            this.labelFileSearchResult.AutoSize = true;
+            this.labelFileSearchResult.Location = new System.Drawing.Point(7, 169);
+            this.labelFileSearchResult.Name = "labelFileSearchResult";
+            this.labelFileSearchResult.Size = new System.Drawing.Size(122, 12);
+            this.labelFileSearchResult.TabIndex = 11;
+            this.labelFileSearchResult.Text = "File Search Result : None";
             // 
             // BooksDataGridView
             // 
@@ -147,7 +156,7 @@
             this.groupBox2.Controls.Add(this.labelResult);
             this.groupBox2.Location = new System.Drawing.Point(608, 3);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(331, 191);
+            this.groupBox2.Size = new System.Drawing.Size(331, 199);
             this.groupBox2.TabIndex = 12;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Result";
@@ -182,15 +191,6 @@
             this.richTextBoxFileContent.Size = new System.Drawing.Size(917, 233);
             this.richTextBoxFileContent.TabIndex = 9;
             this.richTextBoxFileContent.Text = "";
-            // 
-            // labelFileSearchResult
-            // 
-            this.labelFileSearchResult.AutoSize = true;
-            this.labelFileSearchResult.Location = new System.Drawing.Point(7, 169);
-            this.labelFileSearchResult.Name = "labelFileSearchResult";
-            this.labelFileSearchResult.Size = new System.Drawing.Size(122, 12);
-            this.labelFileSearchResult.TabIndex = 11;
-            this.labelFileSearchResult.Text = "File Search Result : None";
             // 
             // SearchEngineResultView
             // 

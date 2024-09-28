@@ -29,6 +29,10 @@ namespace SearchEnginesApp.Presenters
             _toolModel.FileAnalysisLoaded += ToolModel_FileAnalysisEventReceived;
             _toolModel.SearchKeywordLoaded += ToolModel_SearchDataEventReceived;
         }
+        public ToolModel GetToolModel()
+        {
+            return _toolModel;
+        }
 
         #region Handler
         private void ToolModel_FileAnalysisEventReceived(object sender, FileAnalsisEventArgs e)
@@ -116,7 +120,6 @@ namespace SearchEnginesApp.Presenters
             if (View != null && !View.IsDisposed) View.Dispose();
         }
         #endregion View realted...
-
         public string GetFileContent(string name)
         {
             string page = string.Empty;

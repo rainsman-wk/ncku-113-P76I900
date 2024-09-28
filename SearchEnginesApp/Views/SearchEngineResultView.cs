@@ -1,4 +1,5 @@
 ﻿using SearchEnginesApp.Presenters;
+using SearchEnginesApp.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -23,12 +24,14 @@ namespace SearchEnginesApp.Views
     public partial class SearchEngineResultView : UserControl
     {
         private readonly SearchEngineResultPresenter _presenter;
+        private int _openFormsCount = 0;
+        private List<XmlForm> _openForms = new List<XmlForm>();
+
         public SearchEngineResultView(SearchEngineResultPresenter presenter)
         {
             InitializeComponent();
             _presenter = presenter;
         }
-
 
         #region View Feature
         public void UpdateFileList(List<string> Name, List<FileContent> filedata)
@@ -279,7 +282,25 @@ namespace SearchEnginesApp.Views
                 string selectfile = GetSelectFile(selectidx);
                 string content = _presenter.GetFileContent(selectfile);
                 richTextBoxFileContent.Text = content;
+                ShowXmlInNewWindow(selectfile, content);
             }
+        }
+
+        public void ShowXmlInNewWindow(string title, string content)
+        {
+            var existingForm = _openForms.FirstOrDefault(f => f.Text == title);
+            if (existingForm != null)
+            {
+                existingForm.Focus();
+                return;
+            }
+
+            XmlForm xmlForm = new XmlForm(_presenter.GetToolModel(), title, content);
+            xmlForm.StartPosition = FormStartPosition.Manual;
+            xmlForm.Location = new System.Drawing.Point(400 * _openFormsCount++, 0);
+            _openForms.Add(xmlForm);
+            xmlForm.FormClosed += (sender, e) => _openForms.Remove(xmlForm);
+            xmlForm.Show();
         }
     }
 }
