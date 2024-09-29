@@ -42,15 +42,20 @@ namespace SearchEnginesApp.Presenters
                 List<SearchBooks> serachdata = e.SearchData;
                 List<string> names = new List<string>();
                 List<FileContent> contents = new List<FileContent>();
+                List<string> fileswordList = new List<string>();
                 foreach (var book in serachdata)
                 {
                     // Get File Name
                     names.Add(Path.GetFileNameWithoutExtension(book.Path));
                     // Add File Contents
                     contents.Add(book.Content);
+                    fileswordList.AddRange(book.Content.Word);
                 }
                 // Update View File List
                 View.UpdateFileList(names, contents);
+
+                // Update Keywords from Loading File
+                View.UpdateFilesTopKeywords(Utils.KeywordExtractor.ExtractKeywordsToList(fileswordList,10));
             }
             else
             {
@@ -61,7 +66,7 @@ namespace SearchEnginesApp.Presenters
         {
             if(e != null)
             {
-                KeywordArg keywordarg = e.Keywordarg;
+                SearchWordArg keywordarg = e.Keywordarg;
                 List<SearchBooks> Searchbooks = _toolModel.GetSerachBooks();
                 // TODO , remove unused code
                 if (Searchbooks.Count > 0)
@@ -81,11 +86,7 @@ namespace SearchEnginesApp.Presenters
                     View.UpdateFileSearchResult(names, contents, keywordarg);
                 }
             }
-
         }
-
-
-
         #endregion Handler
 
         #region View realted... 
@@ -117,10 +118,23 @@ namespace SearchEnginesApp.Presenters
             FileContent file = _toolModel.GetSearchBookContent(name);
             return file;
         }
-        public KeywordArg GetKeyword()
+        public SearchWordArg GetSearchWords()
         {
-            KeywordArg keywordarg = _toolModel.GetSearchKeyword();
-            return keywordarg;
+            SearchWordArg searchwordArg = _toolModel.GetSearchKeyword();
+            return searchwordArg;
+        }
+        public Dictionary<string, int> GetKeywordsDict(int rank)
+        {
+            Dictionary<string, int> keywords = new Dictionary<string, int>();
+
+            List<SearchBooks> books = _toolModel.GetSerachBooks();
+            List<string> fileWords = new List<string>();
+            foreach (var book in books)
+            {
+                fileWords.AddRange(book.Content.Word);
+            }
+            keywords = Utils.KeywordExtractor.ExtractKeywordsToDict(fileWords, rank);
+            return keywords;
         }
 
     }

@@ -100,22 +100,22 @@ namespace SearchEnginesApp.Views
                 string text = cbSerachContent.Text;
                 if(text != String.Empty)
                 {
-                    KeywordArg keywordArg = new KeywordArg();
+                    SearchWordArg keywordArg = new SearchWordArg();
                     switch (CheckRadioButtonState())
                     {
                         case "Word":
                             // Operation by comma (,) or space ( )
-                            keywordArg.Keywords = text.Split(' ', ',').ToList();
+                            keywordArg.SearchWords = text.Split(' ', ',').ToList();
                             keywordArg.Mode = SearchMode.Word;
                             break;
                         case "Phrase":
                             // Operation by comma (,)
-                            keywordArg.Keywords = text.Split(',').ToList();
+                            keywordArg.SearchWords = text.Split(',').ToList();
                             keywordArg.Mode = SearchMode.Phrase;
                             break;
                         default:
                             // No operation
-                            keywordArg.Keywords.Add(text);
+                            keywordArg.SearchWords.Add(text);
                             keywordArg.Mode = SearchMode.Others;
                             break;
                     }

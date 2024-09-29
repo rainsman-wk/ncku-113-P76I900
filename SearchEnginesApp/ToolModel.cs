@@ -2,16 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Web;
 using System.Windows.Forms;
-using System.Windows.Forms.VisualStyles;
-using static SearchEnginesApp.ToolModel;
-using static SearchEnginesApp.Views.SearchEngineResultView;
+using System.Xml.XPath;
 
 namespace SearchEnginesApp
 {
@@ -23,20 +16,20 @@ namespace SearchEnginesApp
             Phrase,
             Others
         }
-        public class KeywordArg
+        public class SearchWordArg
         {
             public SearchMode Mode { get; set; }
-            public List<string> Keywords { get; set; }
+            public List<string> SearchWords { get; set; }
             public bool InSelection { get; set; }
             public bool MatchCase { get; set; }
-            public KeywordArg()
+            public SearchWordArg()
             {
                 Mode = SearchMode.Others;
-                Keywords = new List<string>();
+                SearchWords = new List<string>();
                 InSelection = false;
                 MatchCase = false;
             }
-            public KeywordArg (bool selection, bool matchcase)
+            public SearchWordArg(bool selection, bool matchcase)
             {
                 InSelection = selection;
                 MatchCase = matchcase;
@@ -54,7 +47,7 @@ namespace SearchEnginesApp
         #region File Event ..
 
         public void SetEventLoadFiles()
-        { 
+        {
             List<string> xmlFiles = new List<string>();
             List<string> jsonFiles = new List<string>();
             GetFileList(out xmlFiles, out jsonFiles);
@@ -104,7 +97,7 @@ namespace SearchEnginesApp
         #region Search Data Event...
         public void SetKeywordSearchEvent()
         {
-            OnGetKeywordData(new KeywordEventArgs(keywords));
+            OnGetKeywordData(new KeywordEventArgs(searchkey));
         }
         protected virtual void OnGetKeywordData(KeywordEventArgs e)
         {
@@ -112,9 +105,9 @@ namespace SearchEnginesApp
         }
         public class KeywordEventArgs : EventArgs
         {
-            public KeywordArg Keywordarg { get; }
+            public SearchWordArg Keywordarg { get; }
 
-            public KeywordEventArgs(KeywordArg keywordarg)
+            public KeywordEventArgs(SearchWordArg keywordarg)
             {
                 Keywordarg = keywordarg;
             }
@@ -193,24 +186,25 @@ namespace SearchEnginesApp
         ///   - Sentence
         public class FileContent
         {
-            public string Pmid {  get; set; }
-            public string Title {  get; set; }
-            public string Journal {  get; set; }
-
-            public List<string> Abstract { get; set; }
-            public List<string> Word { get; set; }
-            public List<string> Sentence { get; set; }
-
-            public FileContent()
+            public string Pmid { get; set; } = string.Empty;
+            public string Title { get; set; } = string.Empty ;
+            public string Journal { get; set; } = string.Empty;
+            public Dictionary<string, int> WordFrequency { get; set; } = new Dictionary<string, int>();
+            private List<string> abstractList = new List<string>();
+            public List<string> Abstract
             {
-                Abstract = new List<string>();
-                Word = new List<string>();
-                Sentence = new List<string>();
-                // New Feature Added
-                Title = string.Empty;
-                Pmid = string.Empty;
-                Journal = string.Empty;
+                get { return abstractList; }
+                set
+                {
+                    abstractList = value;
+                    UpdateWordAndSentence();
+                    UpdateWordTable();
+                }
             }
+            public List<string> Word { get; private set; } = new List<string>();
+            public List<string> Sentence { get; private set; } = new List<string>();
+            public FileContent() { }
+        
             public int WordsCount()
             {
                 return Word.Count;
@@ -224,7 +218,7 @@ namespace SearchEnginesApp
                 int count = 0;
                 foreach (var value in Abstract)
                 {
-                    count+= value.Count();
+                    count += value.Count();
                 }
                 return count;
             }
@@ -261,7 +255,77 @@ namespace SearchEnginesApp
                 }
                 return count;
             }
+            /// <summary>
+            /// This function updates the Word and Sentence lists based on the Abstract content
+            /// </summary>
+            private void UpdateWordAndSentence()
+            {
+                Word = new List<string>();
+                Sentence = new List<string>();
+                foreach (var paragraph in Abstract)
+                {
+                    // Spilt Sentences by ".", "!", "?"
+                    var sentences = Regex.Split(paragraph, @"(?<=[\.!\?])\s+");
+                    Sentence.AddRange(sentences);
 
+                    // Spilt Word by "\W" (and "\w" including numbers and "_"
+                    foreach (var sentence in sentences)
+                    {
+                        var words = Regex.Split(sentence, @"\W+");
+                        Word.AddRange(words.Where(w => !string.IsNullOrEmpty(w)));
+                    }
+                }
+            }
+            /// <summary>
+            /// This function use for calculate word list
+            /// </summary>
+            private void UpdateWordTable()
+            {
+                WordFrequency = new Dictionary<string, int>();
+                foreach (string word in Word)
+                {
+                    string lowerWord = word.ToLower();
+                    if (WordFrequency.ContainsKey(lowerWord))
+                    {
+                        WordFrequency[lowerWord]++;
+                    }
+                    else
+                    {
+                        WordFrequency.Add(lowerWord, 1);
+                    }
+                }
+            }
+            public bool GetKeywordFreq(int rank, out string keyword, out int freq)
+            {
+                bool result = false;
+                keyword = null;
+                freq = 0;
+                if ((WordFrequency == null) || (rank == 0 ))
+                {  
+                    return result;
+                }
+
+                if (rank > 0 && rank <= WordFrequency.Count)
+                {
+                    var sortedWords = WordFrequency.OrderByDescending(w => w.Value).ToList();
+                    int targetFrequency = sortedWords[rank - 1].Value;
+
+                    var wordsWithSameFrequency = sortedWords
+               .Where(w => w.Value == targetFrequency)
+               .Select(w => w.Key)
+               .ToList();
+
+                    string wordsList = string.Join(", ", wordsWithSameFrequency);
+                    keyword = wordsList;
+                    freq = targetFrequency;
+                    result = true;
+                }
+                return result;
+            }
+            public List<string> GetKeywords(int rink)
+            {
+                return Utils.KeywordExtractor.ExtractKeywordsToList(Word, rink);
+            }
         }
 
         #endregion Content struct ...
@@ -271,7 +335,7 @@ namespace SearchEnginesApp
         #region Private variables
         private List<SearchBooks> bookDataBase = new List<SearchBooks>();
         private List<FileBooks> filebooks = new List<FileBooks>();
-        private KeywordArg keywords = new KeywordArg();
+        private SearchWordArg searchkey = new SearchWordArg();
 
         #endregion
 
@@ -297,7 +361,6 @@ namespace SearchEnginesApp
                 }
             }
         }
-
         public void GetFileList(out List<string> xmlfiles, out List<string> jsonfiles)
         {
             xmlfiles = new List<string>();
@@ -308,7 +371,7 @@ namespace SearchEnginesApp
                 var type = Path.GetExtension(value.File);
                 var name = Path.GetFileNameWithoutExtension(value.File);
                 if (string.Equals(type, ".xml")) { xmlfiles.Add(name); }
-                if (string.Equals(type, ".json")){ jsonfiles.Add(name); }
+                if (string.Equals(type, ".json")) { jsonfiles.Add(name); }
             }
         }
 
@@ -359,7 +422,7 @@ namespace SearchEnginesApp
             FileContent content = new FileContent();
             foreach (var file in bookDataBase)
             {
-                if(Path.GetFileNameWithoutExtension(file.Path) == filename)
+                if (Path.GetFileNameWithoutExtension(file.Path) == filename)
                 {
                     content = file.Content;
                 }
@@ -368,28 +431,28 @@ namespace SearchEnginesApp
         }
 
         #endregion Serach Book feature
-        #region Keyword feature...
+        #region Search feature...
         public void ResetSerchKeyword()
         {
-            keywords = new KeywordArg();
+            searchkey = new SearchWordArg();
         }
-        public void SetSearchKeyword(KeywordArg keyword)
+        public void SetSearchWords(SearchWordArg searchwords)
         {
-            keywords = keyword;
+            this.searchkey = searchwords;
         }
-        public void SetSearchKeyword(List<string> keyword)
+        public void SetSearchKeyword(List<string> searchword)
         {
-            keywords.Keywords = keyword;
+            searchkey.SearchWords = searchword;
         }
         public void SetSearchKeyword(SearchMode mode)
         {
-            keywords.Mode = mode;
+            searchkey.Mode = mode;
         }
-        public KeywordArg GetSearchKeyword()
+        public SearchWordArg GetSearchKeyword()
         {
-            return keywords;
+            return searchkey;
         }
-        #endregion Keyword feature...
+        #endregion Search feature...
     }
 
 

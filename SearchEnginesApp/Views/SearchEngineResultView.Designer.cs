@@ -33,6 +33,8 @@
             this.BooksDataGridView = new System.Windows.Forms.DataGridView();
             this.lblXmlInfo = new System.Windows.Forms.Label();
             this.gbXmlFileInfo = new System.Windows.Forms.GroupBox();
+            this.lblKeywordsTitle = new System.Windows.Forms.Label();
+            this.lblFileKeywords = new System.Windows.Forms.Label();
             this.GroupFileParser.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.BooksDataGridView)).BeginInit();
             this.gbXmlFileInfo.SuspendLayout();
@@ -41,11 +43,13 @@
             // GroupFileParser
             // 
             this.GroupFileParser.AutoSize = true;
+            this.GroupFileParser.Controls.Add(this.lblFileKeywords);
+            this.GroupFileParser.Controls.Add(this.lblKeywordsTitle);
             this.GroupFileParser.Controls.Add(this.labelFileSearchResult);
             this.GroupFileParser.Controls.Add(this.BooksDataGridView);
             this.GroupFileParser.Location = new System.Drawing.Point(3, 3);
             this.GroupFileParser.Name = "GroupFileParser";
-            this.GroupFileParser.Size = new System.Drawing.Size(520, 254);
+            this.GroupFileParser.Size = new System.Drawing.Size(520, 320);
             this.GroupFileParser.TabIndex = 11;
             this.GroupFileParser.TabStop = false;
             this.GroupFileParser.Text = "Files Parser";
@@ -87,10 +91,34 @@
             this.gbXmlFileInfo.Controls.Add(this.lblXmlInfo);
             this.gbXmlFileInfo.Location = new System.Drawing.Point(529, 3);
             this.gbXmlFileInfo.Name = "gbXmlFileInfo";
-            this.gbXmlFileInfo.Size = new System.Drawing.Size(217, 254);
+            this.gbXmlFileInfo.Size = new System.Drawing.Size(217, 320);
             this.gbXmlFileInfo.TabIndex = 12;
             this.gbXmlFileInfo.TabStop = false;
             this.gbXmlFileInfo.Text = "Xml File Infomation";
+            // 
+            // lblKeywordsTitle
+            // 
+            this.lblKeywordsTitle.AutoSize = true;
+            this.lblKeywordsTitle.Location = new System.Drawing.Point(6, 247);
+            this.lblKeywordsTitle.Name = "lblKeywordsTitle";
+            this.lblKeywordsTitle.Size = new System.Drawing.Size(129, 12);
+            this.lblKeywordsTitle.TabIndex = 12;
+            this.lblKeywordsTitle.Text = "File List Top 10 Keywords";
+            this.lblKeywordsTitle.Visible = false;
+            // 
+            // lblFileKeywords
+            // 
+            this.lblFileKeywords.AllowDrop = true;
+            this.lblFileKeywords.AutoEllipsis = true;
+            this.lblFileKeywords.AutoSize = true;
+            this.lblFileKeywords.Location = new System.Drawing.Point(6, 267);
+            this.lblFileKeywords.MaximumSize = new System.Drawing.Size(400, 30);
+            this.lblFileKeywords.Name = "lblFileKeywords";
+            this.lblFileKeywords.Size = new System.Drawing.Size(100, 12);
+            this.lblFileKeywords.TabIndex = 13;
+            this.lblFileKeywords.Text = "No Keywords found";
+            this.lblFileKeywords.Visible = false;
+            this.lblFileKeywords.DoubleClick += new System.EventHandler(this.lblFileKeywords_DoubleClick);
             // 
             // SearchEngineResultView
             // 
@@ -101,7 +129,7 @@
             this.Controls.Add(this.gbXmlFileInfo);
             this.Controls.Add(this.GroupFileParser);
             this.Name = "SearchEngineResultView";
-            this.Size = new System.Drawing.Size(755, 263);
+            this.Size = new System.Drawing.Size(756, 328);
             this.GroupFileParser.ResumeLayout(false);
             this.GroupFileParser.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.BooksDataGridView)).EndInit();
@@ -118,5 +146,7 @@
         private System.Windows.Forms.Label lblXmlInfo;
         private System.Windows.Forms.GroupBox gbXmlFileInfo;
         private System.Windows.Forms.Label labelFileSearchResult;
+        private System.Windows.Forms.Label lblKeywordsTitle;
+        private System.Windows.Forms.Label lblFileKeywords;
     }
 }

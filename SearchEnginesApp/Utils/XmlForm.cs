@@ -18,7 +18,8 @@ namespace SearchEnginesApp.Utils
         private readonly ToolModel _toolModel;
         private RichTextBox rtbXmlContent;
         private Label lblTitle;
-        private Label lblKeywordStatus;
+        private Label lblSearchWordsStatus;
+        private Label lblKeywordsStatus;
         private Label lblXmlInfo;
         private GroupBox gbXmlFileInfo;
 
@@ -26,7 +27,7 @@ namespace SearchEnginesApp.Utils
         private int gpXmlInfoX = 215;
         private int gpXmlInfoY = 180;
 
-        public XmlForm(ToolModel toolModel, string title, FileContent content, KeywordArg keywordArg)
+        public XmlForm(ToolModel toolModel, string title, FileContent content, SearchWordArg keywordArg)
         {
             this.Text = $"SearchEngine - [FileName]: {title}.xml [PMID]: {content.Pmid}";
             this.Width = 640;
@@ -51,12 +52,19 @@ namespace SearchEnginesApp.Utils
             lblTitle = new Label { Text = $"Title:" + Environment.NewLine + $"{content.Title} ", AutoSize = true, Location = lctTitle, AutoEllipsis = true };
             this.Controls.Add(lblTitle);
 
-            Point lctKeywordStatus = new Point(10, Height - gpXmlInfoY);
-            Size sizeKeywordStatus = new Size(40, 10);
-            lblKeywordStatus = new Label { Text = "Keyword Status: ", AutoSize = true , Location = lctKeywordStatus, Size = sizeKeywordStatus };
-            this.Controls.Add(lblKeywordStatus);
+            // Search Word(s)
+            Point lctSearchWordsStatus = new Point(10, Height - (gpXmlInfoY-30));
+            Size sizeSearchWordsStatus = new Size(40, 10);
+            lblSearchWordsStatus = new Label { Text = "Search Word(s) Status: ", AutoSize = true , Location = lctSearchWordsStatus, Size = sizeSearchWordsStatus };
+            this.Controls.Add(lblSearchWordsStatus);
 
+            // Keyword(s)
+            Point lctKeywordsStatus = new Point(10, Height - gpXmlInfoY);
+            Size sizeKeywordsStatus = new Size(40, 30);
+            lblKeywordsStatus = new Label { Text = "Keyword(s) List: ", AutoSize = true, Location = lctSearchWordsStatus, Size = sizeSearchWordsStatus };
+            this.Controls.Add(lblKeywordsStatus);
 
+            // File Information
             Point lctgbXmlFileInfo = new Point(Width - gpXmlInfoX, Height - gpXmlInfoY);
             Size sizegbXmlFileInfo = new Size(180, 110);
             lblXmlInfo = new Label { Name = "lblXmlInfo", Text = "File Not Selected", AutoSize = true, Location = new System.Drawing.Point(20, 20), Size = new System.Drawing.Size(80, 20) };
@@ -72,6 +80,9 @@ namespace SearchEnginesApp.Utils
 
             //Update File Information
             UpdateFileInformation(content);
+            //Update File Keywords
+            UpdateFileKeywords(content.GetKeywords(5));
+
             //Update First Highligh Information
             HighlightKeywords(keywordArg, Color.Yellow);
         }
@@ -97,7 +108,8 @@ namespace SearchEnginesApp.Utils
         {
             // Adjust the size and location of the controls
             rtbXmlContent.Size = new Size(this.Width - 40, this.Height - rtbHight);
-            lblKeywordStatus.Location = new Point(10, this.Height - gpXmlInfoY);
+            lblSearchWordsStatus.Location = new Point(10, this.Height - (gpXmlInfoY-30));
+            lblKeywordsStatus.Location = new Point(10, this.Height - gpXmlInfoY);
             gbXmlFileInfo.Location = new Point(Width- gpXmlInfoX, Height- gpXmlInfoY);
 
         }
@@ -110,7 +122,7 @@ namespace SearchEnginesApp.Utils
             rtbXmlContent.SelectionBackColor = Color.White;
         }
 
-        private void HighlightKeywords(KeywordArg keywordarg, Color color)
+        private void HighlightKeywords(SearchWordArg keywordarg, Color color)
         {
             if (keywordarg == null) return;
             if (String.IsNullOrEmpty(rtbXmlContent.Text)) return;
@@ -123,13 +135,13 @@ namespace SearchEnginesApp.Utils
             Regex regex;
             RegexOptions checkoption = (keywordarg.MatchCase) ? RegexOptions.None : RegexOptions.IgnoreCase;
 
-            foreach (string keyword in keywordarg.Keywords)
+            foreach (string keyword in keywordarg.SearchWords)
             {
                 switch (keywordarg.Mode)
                 {
                     case SearchMode.Word:
                     case SearchMode.Phrase:
-                        pattern = @"\b(" + string.Join("|", keywordarg.Keywords.Select(Regex.Escape)) + @")\b";
+                        pattern = @"\b(" + string.Join("|", keywordarg.SearchWords.Select(Regex.Escape)) + @")\b";
                         regex = new Regex(pattern, checkoption);
                         break;
                     case SearchMode.Others:
@@ -159,7 +171,7 @@ namespace SearchEnginesApp.Utils
                     if ((keywordarg.Mode == SearchMode.Word) || (keywordarg.Mode == SearchMode.Phrase))
                     {
                         bool allKeywordsFound = true;
-                        foreach (string kw in keywordarg.Keywords)
+                        foreach (string kw in keywordarg.SearchWords)
                         {
                             regex = new Regex(@"\b" + Regex.Escape(kw) + @"\b", checkoption);
                             if (!regex.IsMatch(text))
@@ -171,7 +183,7 @@ namespace SearchEnginesApp.Utils
                         }
                         if (allKeywordsFound)
                         {
-                            pattern = @"\b(" + string.Join("|", keywordarg.Keywords.Select(Regex.Escape)) + @")\b";
+                            pattern = @"\b(" + string.Join("|", keywordarg.SearchWords.Select(Regex.Escape)) + @")\b";
                             regex = new Regex(pattern, checkoption);
                             matches = regex.Matches(text);
                             foreach (Match match in matches)
@@ -197,11 +209,11 @@ namespace SearchEnginesApp.Utils
 
             if (count == 0)
             {
-                UpdatePageSearchResultLabel(Color.Red, $"Keyword(s) not found in Page");
+                UpdatePageSearchResultLabel(Color.Red, $"SearchWord(s) not found in Page");
             }
             else
             {
-                string result = $"Find Keyword(s) in Selected file" + Environment.NewLine;
+                string result = $"Find SearchWord(s) in Selected file" + Environment.NewLine;
                 result += Environment.NewLine;
                 result += $"Counts : {count}" + Environment.NewLine;
                 UpdatePageSearchResultLabel(Color.Blue, $"Count:{count} matches in entire file");
@@ -211,8 +223,13 @@ namespace SearchEnginesApp.Utils
         private void UpdatePageSearchResultLabel(Color color, String result)
         {
             // Deault Value : File Search Result: None
-            lblKeywordStatus.Text = result;
-            lblKeywordStatus.ForeColor = color;
+            lblSearchWordsStatus.Text = result;
+            lblSearchWordsStatus.ForeColor = color;
+        }
+        private void UpdateFileKeywords(List<string> keywords)
+        {
+            lblKeywordsStatus.Text = $"Top 5 Keywords in file:" +Environment.NewLine;
+            lblKeywordsStatus.Text += string.Join(", ", keywords);
         }
 
         private void UpdateFileInformation(FileContent file)

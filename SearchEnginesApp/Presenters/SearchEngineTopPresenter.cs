@@ -67,14 +67,9 @@ namespace SearchEnginesApp.Presenters
                 {
                     context.Title = articleNode.SelectSingleNode("MedlineCitation/Article/ArticleTitle")?.InnerText;
                     XmlNodeList abstractNodes = articleNode.SelectNodes("MedlineCitation/Article/Abstract/AbstractText");
-                    context.Abstract.AddRange(abstractNodes.Cast<XmlNode>().Select(node => node.InnerText));
+                    context.Abstract = abstractNodes.Cast<XmlNode>().Select(node => node.InnerText).ToList();
                     context.Journal = articleNode.SelectSingleNode("MedlineCitation/Article/Journal/Title")?.InnerText;
                     context.Pmid = articleNode.SelectSingleNode("MedlineCitation/PMID")?.InnerText;
-                }
-                foreach(var text in context.Abstract)
-                {
-                    context.Word.AddRange(text.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).ToList());
-                    context.Sentence.AddRange(text.Split(new[] { '.', '!', '?' }, StringSplitOptions.RemoveEmptyEntries).ToList());
                 }
             }
             return context;
@@ -119,9 +114,9 @@ namespace SearchEnginesApp.Presenters
             // Trigger Event to other view to update Serach book
             _toolModel.SetEventUpdateSerchBook(books);
         }
-        public void SetSearchKeyWord(KeywordArg keyword)
+        public void SetSearchKeyWord(SearchWordArg keyword)
         {
-            _toolModel.SetSearchKeyword(keyword);
+            _toolModel.SetSearchWords(keyword);
             _toolModel.SetKeywordSearchEvent();
         }
         #endregion Search Features...

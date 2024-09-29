@@ -100,7 +100,7 @@ namespace SearchEnginesApp.Views
             }
         }
 
-        public void UpdateFileSearchResult(List<string> Name, List<FileContent> filedata, KeywordArg keywordarg)
+        public void UpdateFileSearchResult(List<string> Name, List<FileContent> filedata, SearchWordArg keywordarg)
         {
             // Reset Search Result
             UpdateLabelSearchResult(String.Empty, SystemColors.WindowText);
@@ -114,16 +114,16 @@ namespace SearchEnginesApp.Views
             {
                 // StartCounting Match
                 count.Add(0);
-                foreach (string keyword in keywordarg.Keywords)
+                foreach (string keyword in keywordarg.SearchWords)
                 {
                     switch (keywordarg.Mode)
                     {
                         case SearchMode.Word:
-                            pattern = @"\b(" + string.Join("|", keywordarg.Keywords.Select(Regex.Escape)) + @")\b";
+                            pattern = @"\b(" + string.Join("|", keywordarg.SearchWords.Select(Regex.Escape)) + @")\b";
                             regex = new Regex(pattern, regexoption);
                             break;
                         case SearchMode.Phrase:
-                            pattern = @"\b(" + string.Join("|", keywordarg.Keywords.Select(Regex.Escape)) + @")\b";
+                            pattern = @"\b(" + string.Join("|", keywordarg.SearchWords.Select(Regex.Escape)) + @")\b";
                             regex = new Regex(pattern, regexoption);
                             break;
                         case SearchMode.Others:
@@ -139,7 +139,7 @@ namespace SearchEnginesApp.Views
                         if ((keywordarg.Mode == SearchMode.Word)|| (keywordarg.Mode == SearchMode.Phrase))
                         {
                             bool allKeywordsFound = true;
-                            foreach (string kw in keywordarg.Keywords)
+                            foreach (string kw in keywordarg.SearchWords)
                             {
                                 Regex kwRegex = new Regex(@"\b" + Regex.Escape(kw) + @"\b", regexoption);
                                 if (!kwRegex.IsMatch(text))
@@ -177,7 +177,7 @@ namespace SearchEnginesApp.Views
             // Display Search Result
             if (count.Count == 0)
             {
-                UpdateFileSearchResultLabel(Color.Red, $"Keyword(s) not found in File");
+                UpdateFileSearchResultLabel(Color.Red, $"Search Word(s) not found in File");
             }
             else
             {
@@ -212,6 +212,9 @@ namespace SearchEnginesApp.Views
 
             //Reset Restult Label
             UpdateLabelSearchResult(String.Empty, SystemColors.WindowText);
+
+            lblKeywordsTitle.Visible = false;
+            lblFileKeywords.Visible = false;
         }
 
         public void FileRows_UpdateKeywordCount(string keyword, int count)
@@ -312,11 +315,10 @@ namespace SearchEnginesApp.Views
                 return;
             }
 
-
             int x = 640 * ((_openFormsCount) % 3);
             int y = 360;
 
-            XmlForm xmlForm = new XmlForm(_presenter.GetToolModel(), title, file, _presenter.GetKeyword());
+            XmlForm xmlForm = new XmlForm(_presenter.GetToolModel(), title, file, _presenter.GetSearchWords());
             xmlForm.StartPosition = FormStartPosition.Manual;
             xmlForm.Location = new System.Drawing.Point(x, y);
             _openForms.Add(xmlForm);
@@ -324,5 +326,38 @@ namespace SearchEnginesApp.Views
             xmlForm.Show();
             _openFormsCount++;
         }
+        public void UpdateFilesTopKeywords(List<string> keywords)
+        {
+            string text = String.Empty;
+            Color textColor = new Color();
+            if(keywords.Count>0)
+            {
+                text = string.Join(", ", keywords);
+                textColor = Color.ForestGreen;
+            }
+            else
+            {
+                text = "No Keywords found";
+                textColor = Color.IndianRed;
+            }
+            lblKeywordsTitle.Visible = true;
+            lblFileKeywords.Visible = true;
+            lblFileKeywords.ForeColor = textColor;
+            lblFileKeywords.Text = text;
+
+        }
+
+        private void lblFileKeywords_DoubleClick(object sender, EventArgs e)
+        {
+            Dictionary<string, int> keywordsdict = _presenter.GetKeywordsDict(20);
+            StringBuilder sb = new StringBuilder();
+            foreach (var kvp in keywordsdict)
+            {
+                sb.AppendLine($"Keyword: [{kvp.Key}] :  Count: {kvp.Value}");
+            }
+            MessageBox.Show(sb.ToString(), "Keywords Top 20 List");
+
+        }
     }
 }
+

@@ -7,9 +7,9 @@ using System.Runtime.InteropServices;
 // 變更這些屬性的值即可修改組件的相關
 // 資訊。
 [assembly: AssemblyTitle("SearchEnginesApp")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Weikai Huang on class P76I900 homework")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("NCKU Homework")]
 [assembly: AssemblyProduct("SearchEnginesApp")]
 [assembly: AssemblyCopyright("Copyright ©  2024")]
 [assembly: AssemblyTrademark("")]
@@ -27,9 +27,8 @@ using System.Runtime.InteropServices;
 //
 //      主要版本
 //      次要版本
-//      組建編號
 //      修訂編號
 //
-[assembly: AssemblyVersion("1.1.0.0")]
-[assembly: AssemblyFileVersion("1.1.0.0")]
+[assembly: AssemblyVersion("1.2.0")]
+[assembly: AssemblyFileVersion("1.2.0")]
 [assembly: NeutralResourcesLanguage("zh-TW")]
