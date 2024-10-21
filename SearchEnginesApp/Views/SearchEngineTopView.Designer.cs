@@ -32,6 +32,7 @@ namespace SearchEnginesApp.Views
         {
             this.components = new System.ComponentModel.Container();
             this.gbXmlLoader = new System.Windows.Forms.GroupBox();
+            this.lblPmidLoadState = new System.Windows.Forms.Label();
             this.linkLabelPubmed = new System.Windows.Forms.LinkLabel();
             this.labelPMID = new System.Windows.Forms.Label();
             this.buttonGetXmlFile = new System.Windows.Forms.Button();
@@ -53,7 +54,6 @@ namespace SearchEnginesApp.Views
             this.tipPhrase = new System.Windows.Forms.ToolTip(this.components);
             this.tipOthers = new System.Windows.Forms.ToolTip(this.components);
             this.tipWord = new System.Windows.Forms.ToolTip(this.components);
-            this.lblPmidLoadState = new System.Windows.Forms.Label();
             this.gbXmlLoader.SuspendLayout();
             this.gbLoadFile.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -76,6 +76,14 @@ namespace SearchEnginesApp.Views
             this.gbXmlLoader.TabIndex = 11;
             this.gbXmlLoader.TabStop = false;
             this.gbXmlLoader.Text = "Pubmed Xml Loader";
+            // 
+            // lblPmidLoadState
+            // 
+            this.lblPmidLoadState.AutoSize = true;
+            this.lblPmidLoadState.Location = new System.Drawing.Point(17, 71);
+            this.lblPmidLoadState.Name = "lblPmidLoadState";
+            this.lblPmidLoadState.Size = new System.Drawing.Size(0, 12);
+            this.lblPmidLoadState.TabIndex = 14;
             // 
             // linkLabelPubmed
             // 
@@ -286,14 +294,6 @@ namespace SearchEnginesApp.Views
             // tipWord
             // 
             this.tipWord.BackColor = System.Drawing.Color.LightBlue;
-            // 
-            // lblPmidLoadState
-            // 
-            this.lblPmidLoadState.AutoSize = true;
-            this.lblPmidLoadState.Location = new System.Drawing.Point(17, 71);
-            this.lblPmidLoadState.Name = "lblPmidLoadState";
-            this.lblPmidLoadState.Size = new System.Drawing.Size(0, 12);
-            this.lblPmidLoadState.TabIndex = 14;
             // 
             // SearchEngineTopView
             // 

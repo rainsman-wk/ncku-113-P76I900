@@ -357,7 +357,7 @@ namespace SearchEnginesApp.Views
 
         private void btnZipfDistribution_Click(object sender, EventArgs e)
         {
-            ZipfChartForm zipfChartForm = new ZipfChartForm(new Point(960, 240), "All DataBase", _presenter.GetKeywordsDict(0));
+            ZipfChartForm zipfChartForm = new ZipfChartForm(new Point(960, 240), "All DataBase", _presenter.GetSearchBookTokens());
             zipfChartForm.Show();
         }
     }

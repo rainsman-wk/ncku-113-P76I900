@@ -136,6 +136,18 @@ namespace SearchEnginesApp.Presenters
             keywords = Utils.KeywordExtractor.ExtractKeywordsToDict(fileWords, rank);
             return keywords;
         }
+        public List<string> GetSearchBookTokens()
+        {
+            List<string> tokens = new List<string>();
+
+            List<SearchBooks> books = _toolModel.GetSerachBooks();
+            foreach (var book in books)
+            {
+                tokens.AddRange(book.Content.Word);
+            }
+            return tokens;
+        }
+
 
     }
 

@@ -29,13 +29,13 @@
         private void InitializeComponent()
         {
             this.GroupFileParser = new System.Windows.Forms.GroupBox();
+            this.btnZipfDistribution = new System.Windows.Forms.Button();
             this.lblFileKeywords = new System.Windows.Forms.Label();
             this.lblKeywordsTitle = new System.Windows.Forms.Label();
             this.labelFileSearchResult = new System.Windows.Forms.Label();
             this.BooksDataGridView = new System.Windows.Forms.DataGridView();
             this.lblXmlInfo = new System.Windows.Forms.Label();
             this.gbXmlFileInfo = new System.Windows.Forms.GroupBox();
-            this.btnZipfDistribution = new System.Windows.Forms.Button();
             this.GroupFileParser.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.BooksDataGridView)).BeginInit();
             this.gbXmlFileInfo.SuspendLayout();
@@ -55,6 +55,16 @@
             this.GroupFileParser.TabIndex = 11;
             this.GroupFileParser.TabStop = false;
             this.GroupFileParser.Text = "Files Parser";
+            // 
+            // btnZipfDistribution
+            // 
+            this.btnZipfDistribution.Location = new System.Drawing.Point(431, 267);
+            this.btnZipfDistribution.Name = "btnZipfDistribution";
+            this.btnZipfDistribution.Size = new System.Drawing.Size(75, 23);
+            this.btnZipfDistribution.TabIndex = 14;
+            this.btnZipfDistribution.Text = "Zipf Curve";
+            this.btnZipfDistribution.UseVisualStyleBackColor = true;
+            this.btnZipfDistribution.Click += new System.EventHandler(this.btnZipfDistribution_Click);
             // 
             // lblFileKeywords
             // 
@@ -121,16 +131,6 @@
             this.gbXmlFileInfo.TabIndex = 12;
             this.gbXmlFileInfo.TabStop = false;
             this.gbXmlFileInfo.Text = "Xml File Infomation";
-            // 
-            // btnZipfDistribution
-            // 
-            this.btnZipfDistribution.Location = new System.Drawing.Point(431, 267);
-            this.btnZipfDistribution.Name = "btnZipfDistribution";
-            this.btnZipfDistribution.Size = new System.Drawing.Size(75, 23);
-            this.btnZipfDistribution.TabIndex = 14;
-            this.btnZipfDistribution.Text = "Zipf Curve";
-            this.btnZipfDistribution.UseVisualStyleBackColor = true;
-            this.btnZipfDistribution.Click += new System.EventHandler(this.btnZipfDistribution_Click);
             // 
             // SearchEngineResultView
             // 

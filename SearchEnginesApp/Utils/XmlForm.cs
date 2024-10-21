@@ -24,8 +24,6 @@ namespace SearchEnginesApp.Utils
         private Label lblKeywordsStatus;
         private Label lblXmlInfo;
         private GroupBox gbXmlFileInfo;
-        private Chart xyseries;
-
 
         private int rtbHight = 240;
         private int gpXmlInfoX = 215;
@@ -77,8 +75,8 @@ namespace SearchEnginesApp.Utils
             this.gbXmlFileInfo.Controls.Add(this.lblXmlInfo);
             this.Controls.Add(gbXmlFileInfo);
 
-
-            ZipfChartForm zipfChartForm = new ZipfChartForm(new Point(this.Location.X, this.Location.Y + 520), title, Utils.KeywordExtractor.ExtractKeywordsToDict(content.Word, 0));
+            //Show Zipf Chart
+            ZipfChartForm zipfChartForm = new ZipfChartForm(new Point(this.Location.X, this.Location.Y + 520), title, content.Word);
             zipfChartForm.Show();
 
 
