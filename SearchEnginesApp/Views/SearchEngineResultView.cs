@@ -98,7 +98,14 @@ namespace SearchEnginesApp.Views
                 BooksDataGridView.CurrentCell = BooksDataGridView.Rows[idx].Cells[0];
                 KeywordSearchResultCount(false);
                 UpdateFileInformation(Name[Name.Count - 1]);
+
+
+                lblKeywordsTitle.Text = "File List Top 10 Keywords" + $" (Database : {filedata.Count+1}) files";
+
             }
+
+
+
         }
 
         public void UpdateFileSearchResult(List<string> Name, List<FileContent> filedata, SearchWordArg keywordarg)
@@ -107,6 +114,7 @@ namespace SearchEnginesApp.Views
             UpdateLabelSearchResult(String.Empty, SystemColors.WindowText);
             // Keyword Seraching in Files
             List<int> count = new List<int>();
+            int filecount = 0;
             string pattern;
             Regex regex;
             RegexOptions regexoption = (keywordarg.MatchCase) ? RegexOptions.None : RegexOptions.IgnoreCase;
@@ -171,6 +179,8 @@ namespace SearchEnginesApp.Views
                 if (count[idx] > 0)
                 {
                     FileRows_HighlightKeyword(Name[idx], Color.LightSeaGreen);
+                    _presenter.GetHashCode();
+                    filecount++;
                 }
             }
             // Enable Result Counts
@@ -187,7 +197,7 @@ namespace SearchEnginesApp.Views
                 {
                     totalcount += num;
                 }
-                UpdateFileSearchResultLabel(Color.Blue, $"Count:{totalcount} matches in file List");
+                UpdateFileSearchResultLabel(Color.Blue, $"Count:{totalcount} matches in {filecount} file(s)");
             }
             UpdateFileInformation(Name[Name.Count - 1]);
         }
@@ -357,8 +367,7 @@ namespace SearchEnginesApp.Views
 
         private void btnZipfDistribution_Click(object sender, EventArgs e)
         {
-            ZipfChartForm zipfChartForm = new ZipfChartForm(new Point(960, 240), "All DataBase", _presenter.GetSearchBookTokens());
-            zipfChartForm.Show();
+           _presenter.GetSearchBookTokens();
         }
     }
 }

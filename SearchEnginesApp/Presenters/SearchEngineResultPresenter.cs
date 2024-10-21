@@ -1,4 +1,5 @@
-﻿using SearchEnginesApp.Views;
+﻿using SearchEnginesApp.Utils;
+using SearchEnginesApp.Views;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -6,11 +7,13 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Remoting.Contexts;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using static SearchEnginesApp.ToolModel;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ProgressBar;
 
 namespace SearchEnginesApp.Presenters
 {
@@ -37,7 +40,7 @@ namespace SearchEnginesApp.Presenters
         #region Handler
         private void ToolModel_FileAnalysisEventReceived(object sender, FileAnalsisEventArgs e)
         {
-            if(e.SearchData.Count > 0 )
+            if (e.SearchData.Count > 0)
             {
                 List<SearchBooks> serachdata = e.SearchData;
                 List<string> names = new List<string>();
@@ -55,7 +58,7 @@ namespace SearchEnginesApp.Presenters
                 View.UpdateFileList(names, contents);
 
                 // Update Keywords from Loading File
-                View.UpdateFilesTopKeywords(Utils.KeywordExtractor.ExtractKeywordsToList(fileswordList,10));
+                View.UpdateFilesTopKeywords(Utils.KeywordExtractor.ExtractKeywordsToList(fileswordList, 10));
             }
             else
             {
@@ -64,7 +67,7 @@ namespace SearchEnginesApp.Presenters
         }
         private void ToolModel_SearchDataEventReceived(object sender, KeywordEventArgs e)
         {
-            if(e != null)
+            if (e != null)
             {
                 SearchWordArg keywordarg = e.Keywordarg;
                 List<SearchBooks> Searchbooks = _toolModel.GetSerachBooks();
@@ -136,22 +139,91 @@ namespace SearchEnginesApp.Presenters
             keywords = Utils.KeywordExtractor.ExtractKeywordsToDict(fileWords, rank);
             return keywords;
         }
-        public List<string> GetSearchBookTokens()
+        public void GetSearchBookTokens()
         {
             List<string> tokens = new List<string>();
-
-            List<SearchBooks> books = _toolModel.GetSerachBooks();
+            bool KeywordSet = (_toolModel.GetSearchKeyword().SearchWords.Count > 0);
+            int count = 0;
+            List <SearchBooks> books = _toolModel.GetSerachBooks();
             foreach (var book in books)
             {
-                tokens.AddRange(book.Content.Word);
+                if(KeywordSet)
+                {
+                    List<string> keywordfile = GetSearchWords(book.Content.Word);
+                    tokens.AddRange(keywordfile);
+                    if(keywordfile.Count >0) { count++; }
+                }
+                else
+                {
+                    tokens.AddRange(book.Content.Word);
+                }
             }
-            return tokens;
+            string Text = (KeywordSet) ? $"Find Keyword in {count.ToString()} files" : "All DataBase";
+            ZipfChartForm zipfChartForm = new ZipfChartForm(new Point(960, 240), Text, tokens);
+            zipfChartForm.Show();
         }
 
+        public List<string> GetSearchWords(List<string> words)
+        {
+            SearchWordArg keywordarg = _toolModel.GetSearchKeyword();
+            List<string> findfileword = new List<string>();
 
+            string pattern;
+            Regex regex;
+            RegexOptions regexoption = (keywordarg.MatchCase) ? RegexOptions.None : RegexOptions.IgnoreCase;
+            StringComparison checkoption = (keywordarg.MatchCase) ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
+
+            foreach (string keyword in keywordarg.SearchWords)
+            {
+                switch (keywordarg.Mode)
+                {
+                    case SearchMode.Word:
+                        pattern = @"\b(" + string.Join("|", keywordarg.SearchWords.Select(Regex.Escape)) + @")\b";
+                        regex = new Regex(pattern, regexoption);
+                        break;
+                    case SearchMode.Phrase:
+                        pattern = @"\b(" + string.Join("|", keywordarg.SearchWords.Select(Regex.Escape)) + @")\b";
+                        regex = new Regex(pattern, regexoption);
+                        break;
+                    case SearchMode.Others:
+                    default:
+                        // No limited Serch Mode
+                        regex = new Regex(keyword, regexoption);
+                        break;
+                }
+                MatchCollection matches;
+
+                foreach (string word in words)
+                {
+                    if ((keywordarg.Mode == SearchMode.Word) || (keywordarg.Mode == SearchMode.Phrase))
+                    {
+                        bool allKeywordsFound = true;
+                        foreach (string kw in keywordarg.SearchWords)
+                        {
+                            Regex kwRegex = new Regex(@"\b" + Regex.Escape(kw) + @"\b", regexoption);
+                            if (!kwRegex.IsMatch(word))
+                            {
+                                allKeywordsFound = false;
+                                break;
+                            }
+                        }
+                        if (allKeywordsFound)
+                        {
+                            findfileword = words;
+                        }
+                    }
+                    else
+                    {
+                        matches = regex.Matches(word);
+                        foreach (Match match in matches)
+                        {
+                            findfileword = words;
+                        }
+                    }
+
+                }
+            }
+            return findfileword;
+        }
     }
-
-
-
-
 }
