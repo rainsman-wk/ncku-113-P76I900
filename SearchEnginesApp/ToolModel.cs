@@ -405,16 +405,24 @@ namespace SearchEnginesApp
             {
                 if (value.CheckedState)
                 {
-                    pathlist.Add(value.File);
+                    string relativePath = GetRelativePath(AppDomain.CurrentDomain.BaseDirectory, value.File);
+                    pathlist.Add(relativePath);
                 }
             }
             searchfiles = pathlist;
             searchfiles.Sort();
         }
+        private string GetRelativePath(string basePath, string fullPath)
+        {
+            Uri baseUri = new Uri(basePath);
+            Uri fileUri = new Uri(fullPath);
+            Uri relativeUri = baseUri.MakeRelativeUri(fileUri);
+            return relativeUri.ToString().Replace('/', '\\');
+        }
 
 
-        #region Serach Book feature
-        public void CleanSearchBooks()
+            #region Serach Book feature
+         public void CleanSearchBooks()
         {
             bookDataBase.Clear();
         }
