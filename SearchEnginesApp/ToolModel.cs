@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SearchEnginesApp.Utils;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -322,9 +323,9 @@ namespace SearchEnginesApp
                 }
                 return result;
             }
-            public List<string> GetKeywords(int rink)
+            public List<string> GetKeywords(int rink, bool stopword = false)
             {
-                return Utils.KeywordExtractor.ExtractKeywordsToList(Word, rink);
+                return Utils.KeywordExtractor.ExtractKeywordsToList(Word, rink, stopword);
             }
         }
 
@@ -336,8 +337,26 @@ namespace SearchEnginesApp
         private List<SearchBooks> bookDataBase = new List<SearchBooks>();
         private List<FileBooks> filebooks = new List<FileBooks>();
         private SearchWordArg searchkey = new SearchWordArg();
+        private DatabaseHelper dbHelper = new DatabaseHelper();
 
         #endregion
+
+        public void DatabaseInitialize()
+        {
+            dbHelper = new DatabaseHelper();
+            dbHelper.InitializeDatabase();
+        }
+        public void GetSearchBookDB()
+        {
+            List<SearchBooks> books = dbHelper.GetBooks();
+            foreach (var book in books)
+            {
+                AddFileList(book.Path);
+            }
+            SetEventLoadFiles();
+
+            SetEventUpdateSerchBook(books);
+        }
 
         public void ClearFileList()
         {

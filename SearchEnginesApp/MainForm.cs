@@ -41,11 +41,11 @@ namespace SearchEnginesApp
             _SerchEnginePresenter = new SearchEngineResultPresenter(_toolModel);
             tpSearchResult.Controls.Add(_SerchEnginePresenter.ShowView());
 
-            _SerchEngineTopPresenter = new SearchEngineTopPresenter(_toolModel);
-            MainTopView.Controls.Add(_SerchEngineTopPresenter.ShowView());
-
             _FilesTreePresenter = new FilesTreePresenter(_toolModel);
             splitContainer1.Panel1.Controls.Add(_FilesTreePresenter.ShowView());
+
+            _SerchEngineTopPresenter = new SearchEngineTopPresenter(_toolModel);
+            MainTopView.Controls.Add(_SerchEngineTopPresenter.ShowView());
 
         }
     }

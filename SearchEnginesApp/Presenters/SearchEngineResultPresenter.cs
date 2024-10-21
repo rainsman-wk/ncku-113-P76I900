@@ -123,9 +123,9 @@ namespace SearchEnginesApp.Presenters
             SearchWordArg searchwordArg = _toolModel.GetSearchKeyword();
             return searchwordArg;
         }
-        public Dictionary<string, int> GetKeywordsDict(int rank)
+        public Dictionary<string, (int count, List<int> indices)> GetKeywordsDict(int rank)
         {
-            Dictionary<string, int> keywords = new Dictionary<string, int>();
+            Dictionary<string, (int count, List<int> indices)> keywords = new Dictionary<string, (int count, List<int> indices)>();
 
             List<SearchBooks> books = _toolModel.GetSerachBooks();
             List<string> fileWords = new List<string>();

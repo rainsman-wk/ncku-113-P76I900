@@ -15,6 +15,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Forms.DataVisualization.Charting;
 using System.Xml.Linq;
 using static SearchEnginesApp.ToolModel;
 using static System.Net.Mime.MediaTypeNames;
@@ -136,7 +137,7 @@ namespace SearchEnginesApp.Views
 
                     foreach (string text in filedata[idx].Abstract)
                     {
-                        if ((keywordarg.Mode == SearchMode.Word)|| (keywordarg.Mode == SearchMode.Phrase))
+                        if ((keywordarg.Mode == SearchMode.Word) || (keywordarg.Mode == SearchMode.Phrase))
                         {
                             bool allKeywordsFound = true;
                             foreach (string kw in keywordarg.SearchWords)
@@ -162,12 +163,12 @@ namespace SearchEnginesApp.Views
                             }
                         }
 
-   
+
                     }
                 }
 
                 FileRows_UpdateKeywordCount(Name[idx], count[idx]);
-                if (count[idx] >0)
+                if (count[idx] > 0)
                 {
                     FileRows_HighlightKeyword(Name[idx], Color.LightSeaGreen);
                 }
@@ -188,7 +189,7 @@ namespace SearchEnginesApp.Views
                 }
                 UpdateFileSearchResultLabel(Color.Blue, $"Count:{totalcount} matches in file List");
             }
-            UpdateFileInformation(Name[Name.Count-1]);
+            UpdateFileInformation(Name[Name.Count - 1]);
         }
 
         #endregion View Feature
@@ -286,7 +287,7 @@ namespace SearchEnginesApp.Views
 
         private void BooksDataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if(e.RowIndex == -1)
+            if (e.RowIndex == -1)
             {
 
             }
@@ -315,12 +316,8 @@ namespace SearchEnginesApp.Views
                 return;
             }
 
-            int x = 640 * ((_openFormsCount) % 3);
-            int y = 360;
-
-            XmlForm xmlForm = new XmlForm(_presenter.GetToolModel(), title, file, _presenter.GetSearchWords());
+            XmlForm xmlForm = new XmlForm(new Point(640 * ((_openFormsCount) % 3), 120), _presenter.GetToolModel(), title, file, _presenter.GetSearchWords());
             xmlForm.StartPosition = FormStartPosition.Manual;
-            xmlForm.Location = new System.Drawing.Point(x, y);
             _openForms.Add(xmlForm);
             xmlForm.FormClosed += (sender, e) => _openForms.Remove(xmlForm);
             xmlForm.Show();
@@ -330,7 +327,7 @@ namespace SearchEnginesApp.Views
         {
             string text = String.Empty;
             Color textColor = new Color();
-            if(keywords.Count>0)
+            if (keywords.Count > 0)
             {
                 text = string.Join(", ", keywords);
                 textColor = Color.ForestGreen;
@@ -349,14 +346,19 @@ namespace SearchEnginesApp.Views
 
         private void lblFileKeywords_DoubleClick(object sender, EventArgs e)
         {
-            Dictionary<string, int> keywordsdict = _presenter.GetKeywordsDict(20);
+            Dictionary<string, (int count, List<int> indices)> keywordsdict = _presenter.GetKeywordsDict(20);
             StringBuilder sb = new StringBuilder();
             foreach (var kvp in keywordsdict)
             {
-                sb.AppendLine($"Keyword: [{kvp.Key}] :  Count: {kvp.Value}");
+                sb.AppendLine($"Keyword: [{kvp.Key}] :  Count: {kvp.Value.count}");
             }
             MessageBox.Show(sb.ToString(), "Keywords Top 20 List");
+        }
 
+        private void btnZipfDistribution_Click(object sender, EventArgs e)
+        {
+            ZipfChartForm zipfChartForm = new ZipfChartForm(new Point(960, 240), "All DataBase", _presenter.GetKeywordsDict(0));
+            zipfChartForm.Show();
         }
     }
 }

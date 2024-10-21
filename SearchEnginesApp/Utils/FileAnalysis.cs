@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,9 +22,9 @@ namespace SearchEnginesApp.Utils
             "just", "don", "should", "now","this","that","was", "were","start","end",
             "data", "have", "these",
         };
-        public static Dictionary<string, int> ExtractKeywordsToDict(string text, int rank = 10, bool stopword = true)
+        public static Dictionary<string, (int count, List<int> indices)> ExtractKeywordsToDict(string text, int rank = 10, bool stopword = false)
         {
-            var wordFrequency = new Dictionary<string, int>();
+            var wordFrequency = new Dictionary<string, (int count, List<int>indices)>();
 
 
             // Spilt text to word list 
@@ -38,25 +39,28 @@ namespace SearchEnginesApp.Utils
                 words = words.Where(w => w.Length > 2).ToArray();
             }
 
-
-            foreach (var word in words)
+            for (int i = 0; i < words.Length; i++)
             {
-                if (wordFrequency.ContainsKey(word))
+                var word = words[i];
+                if(wordFrequency.ContainsKey(word))
                 {
-                    wordFrequency[word]++;
+                    wordFrequency[word] = (wordFrequency[word].count + 1, wordFrequency[word].indices);
+                    // Start Index from One
+                    wordFrequency[word].indices.Add(i+1);
                 }
                 else
                 {
-                    wordFrequency.Add(word, 1);
+                    wordFrequency.Add(word,(1, new List<int> {i+1}));
                 }
             }
+
             // Return All values when get rank equal to zero
             if(rank ==0) { rank = wordFrequency.Count(); }
             return wordFrequency.OrderByDescending(w => w.Value).Take(rank).ToDictionary(w => w.Key, w => w.Value);
         }
-        public static Dictionary<string, int> ExtractKeywordsToDict(List<string> words, int rank = 10, bool stopword = true)
+        public static Dictionary<string, (int count, List<int> indices)> ExtractKeywordsToDict(List<string> words, int rank = 10, bool stopword = false)
         {
-            var wordFrequency = new Dictionary<string, int>();
+            var wordFrequency = new Dictionary<string, (int count, List<int> indices)>();
             IEnumerable<string> filteredWords;
             if (stopword)
             {
@@ -67,22 +71,25 @@ namespace SearchEnginesApp.Utils
                 filteredWords = words.Where(w => w.Length > 2);
             }
 
-            foreach (var word in filteredWords)
+            for (int i = 0; i < words.Count; i++)
             {
+                var word = words[i];
                 if (wordFrequency.ContainsKey(word))
                 {
-                    wordFrequency[word]++;
+                    wordFrequency[word] = (wordFrequency[word].count + 1, wordFrequency[word].indices);
+                    // Start Index from One
+                    wordFrequency[word].indices.Add(i + 1);
                 }
                 else
                 {
-                    wordFrequency.Add(word, 1);
+                    wordFrequency.Add(word, (1, new List<int> { i + 1 }));
                 }
             }
             // Return All values when get rank equal to zero
             if (rank == 0) { rank = wordFrequency.Count(); }
-            return wordFrequency.OrderByDescending(w => w.Value).Take(rank).ToDictionary(w => w.Key, w => w.Value);
+            return wordFrequency.OrderByDescending(w => w.Value.count).Take(rank).ToDictionary(w => w.Key, w => w.Value);
         }
-        public static List<string> ExtractKeywordsToList(List<string> words, int rank, bool stopword = true)
+        public static List<string> ExtractKeywordsToList(List<string> words, int rank, bool stopword = false)
         {
             var wordFrequency = new Dictionary<string, int>();
             IEnumerable<string> filteredWords;

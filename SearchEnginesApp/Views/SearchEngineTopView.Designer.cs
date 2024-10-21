@@ -53,6 +53,7 @@ namespace SearchEnginesApp.Views
             this.tipPhrase = new System.Windows.Forms.ToolTip(this.components);
             this.tipOthers = new System.Windows.Forms.ToolTip(this.components);
             this.tipWord = new System.Windows.Forms.ToolTip(this.components);
+            this.lblPmidLoadState = new System.Windows.Forms.Label();
             this.gbXmlLoader.SuspendLayout();
             this.gbLoadFile.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -64,13 +65,14 @@ namespace SearchEnginesApp.Views
             // 
             this.gbXmlLoader.AutoSize = true;
             this.gbXmlLoader.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.gbXmlLoader.Controls.Add(this.lblPmidLoadState);
             this.gbXmlLoader.Controls.Add(this.linkLabelPubmed);
             this.gbXmlLoader.Controls.Add(this.labelPMID);
             this.gbXmlLoader.Controls.Add(this.buttonGetXmlFile);
             this.gbXmlLoader.Controls.Add(this.pmidTextBox);
             this.gbXmlLoader.Location = new System.Drawing.Point(547, 11);
             this.gbXmlLoader.Name = "gbXmlLoader";
-            this.gbXmlLoader.Size = new System.Drawing.Size(243, 87);
+            this.gbXmlLoader.Size = new System.Drawing.Size(243, 101);
             this.gbXmlLoader.TabIndex = 11;
             this.gbXmlLoader.TabStop = false;
             this.gbXmlLoader.Text = "Pubmed Xml Loader";
@@ -110,6 +112,7 @@ namespace SearchEnginesApp.Views
             this.pmidTextBox.Name = "pmidTextBox";
             this.pmidTextBox.Size = new System.Drawing.Size(100, 22);
             this.pmidTextBox.TabIndex = 8;
+            this.pmidTextBox.TextChanged += new System.EventHandler(this.pmidTextBox_TextChanged);
             // 
             // gbLoadFile
             // 
@@ -117,9 +120,9 @@ namespace SearchEnginesApp.Views
             this.gbLoadFile.Controls.Add(this.groupBox1);
             this.gbLoadFile.Controls.Add(this.gbInputFiles);
             this.gbLoadFile.Location = new System.Drawing.Point(9, 9);
-            this.gbLoadFile.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.gbLoadFile.Margin = new System.Windows.Forms.Padding(2);
             this.gbLoadFile.Name = "gbLoadFile";
-            this.gbLoadFile.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.gbLoadFile.Padding = new System.Windows.Forms.Padding(2);
             this.gbLoadFile.Size = new System.Drawing.Size(533, 96);
             this.gbLoadFile.TabIndex = 12;
             this.gbLoadFile.TabStop = false;
@@ -284,13 +287,21 @@ namespace SearchEnginesApp.Views
             // 
             this.tipWord.BackColor = System.Drawing.Color.LightBlue;
             // 
+            // lblPmidLoadState
+            // 
+            this.lblPmidLoadState.AutoSize = true;
+            this.lblPmidLoadState.Location = new System.Drawing.Point(17, 71);
+            this.lblPmidLoadState.Name = "lblPmidLoadState";
+            this.lblPmidLoadState.Size = new System.Drawing.Size(0, 12);
+            this.lblPmidLoadState.TabIndex = 14;
+            // 
             // SearchEngineTopView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.gbLoadFile);
             this.Controls.Add(this.gbXmlLoader);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "SearchEngineTopView";
             this.Size = new System.Drawing.Size(800, 107);
             this.gbXmlLoader.ResumeLayout(false);
@@ -330,5 +341,6 @@ namespace SearchEnginesApp.Views
         private System.Windows.Forms.CheckBox cbMatchCase;
         private System.Windows.Forms.CheckBox cbInSelection;
         private System.Windows.Forms.Button buttonFileAnalysis;
+        private Label lblPmidLoadState;
     }
 }

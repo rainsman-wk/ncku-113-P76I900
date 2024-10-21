@@ -8,8 +8,10 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Forms.DataVisualization.Charting;
 using static SearchEnginesApp.ToolModel;
 using static System.Net.Mime.MediaTypeNames;
+
 
 namespace SearchEnginesApp.Utils
 {
@@ -22,14 +24,17 @@ namespace SearchEnginesApp.Utils
         private Label lblKeywordsStatus;
         private Label lblXmlInfo;
         private GroupBox gbXmlFileInfo;
+        private Chart xyseries;
+
 
         private int rtbHight = 240;
         private int gpXmlInfoX = 215;
         private int gpXmlInfoY = 180;
 
-        public XmlForm(ToolModel toolModel, string title, FileContent content, SearchWordArg keywordArg)
+        public XmlForm(Point formLocation , ToolModel toolModel, string title, FileContent content, SearchWordArg keywordArg)
         {
             this.Text = $"SearchEngine - [FileName]: {title}.xml [PMID]: {content.Pmid}";
+            this.Location = formLocation;
             this.Width = 640;
             this.Height = 520;
             this.AutoScroll = true;
@@ -38,7 +43,7 @@ namespace SearchEnginesApp.Utils
             string text = String.Empty;
             foreach (string txt in content.Abstract)
             {
-                text += txt + Environment.NewLine;
+                text += txt + " ";
             }
             // Content Confiugration
             Point lctRtbxmlContent = new Point(10, 50);
@@ -72,6 +77,11 @@ namespace SearchEnginesApp.Utils
             this.gbXmlFileInfo.Controls.Add(this.lblXmlInfo);
             this.Controls.Add(gbXmlFileInfo);
 
+
+            ZipfChartForm zipfChartForm = new ZipfChartForm(new Point(this.Location.X, this.Location.Y + 520), title, Utils.KeywordExtractor.ExtractKeywordsToDict(content.Word, 0));
+            zipfChartForm.Show();
+
+
             // Form Event Handle
             this.Resize += new EventHandler(XmlForm_Resize);
             this.FormClosing += new FormClosingEventHandler(XmlForm_FormClosing);
@@ -81,7 +91,7 @@ namespace SearchEnginesApp.Utils
             //Update File Information
             UpdateFileInformation(content);
             //Update File Keywords
-            UpdateFileKeywords(content.GetKeywords(5));
+            UpdateFileKeywords(content.GetKeywords(5,true));
 
             //Update First Highligh Information
             HighlightKeywords(keywordArg, Color.Yellow);

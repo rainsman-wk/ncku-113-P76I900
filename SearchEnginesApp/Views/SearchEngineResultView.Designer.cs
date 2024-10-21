@@ -29,12 +29,13 @@
         private void InitializeComponent()
         {
             this.GroupFileParser = new System.Windows.Forms.GroupBox();
+            this.lblFileKeywords = new System.Windows.Forms.Label();
+            this.lblKeywordsTitle = new System.Windows.Forms.Label();
             this.labelFileSearchResult = new System.Windows.Forms.Label();
             this.BooksDataGridView = new System.Windows.Forms.DataGridView();
             this.lblXmlInfo = new System.Windows.Forms.Label();
             this.gbXmlFileInfo = new System.Windows.Forms.GroupBox();
-            this.lblKeywordsTitle = new System.Windows.Forms.Label();
-            this.lblFileKeywords = new System.Windows.Forms.Label();
+            this.btnZipfDistribution = new System.Windows.Forms.Button();
             this.GroupFileParser.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.BooksDataGridView)).BeginInit();
             this.gbXmlFileInfo.SuspendLayout();
@@ -43,6 +44,7 @@
             // GroupFileParser
             // 
             this.GroupFileParser.AutoSize = true;
+            this.GroupFileParser.Controls.Add(this.btnZipfDistribution);
             this.GroupFileParser.Controls.Add(this.lblFileKeywords);
             this.GroupFileParser.Controls.Add(this.lblKeywordsTitle);
             this.GroupFileParser.Controls.Add(this.labelFileSearchResult);
@@ -53,6 +55,30 @@
             this.GroupFileParser.TabIndex = 11;
             this.GroupFileParser.TabStop = false;
             this.GroupFileParser.Text = "Files Parser";
+            // 
+            // lblFileKeywords
+            // 
+            this.lblFileKeywords.AllowDrop = true;
+            this.lblFileKeywords.AutoEllipsis = true;
+            this.lblFileKeywords.AutoSize = true;
+            this.lblFileKeywords.Location = new System.Drawing.Point(6, 267);
+            this.lblFileKeywords.MaximumSize = new System.Drawing.Size(400, 30);
+            this.lblFileKeywords.Name = "lblFileKeywords";
+            this.lblFileKeywords.Size = new System.Drawing.Size(100, 12);
+            this.lblFileKeywords.TabIndex = 13;
+            this.lblFileKeywords.Text = "No Keywords found";
+            this.lblFileKeywords.Visible = false;
+            this.lblFileKeywords.DoubleClick += new System.EventHandler(this.lblFileKeywords_DoubleClick);
+            // 
+            // lblKeywordsTitle
+            // 
+            this.lblKeywordsTitle.AutoSize = true;
+            this.lblKeywordsTitle.Location = new System.Drawing.Point(6, 247);
+            this.lblKeywordsTitle.Name = "lblKeywordsTitle";
+            this.lblKeywordsTitle.Size = new System.Drawing.Size(129, 12);
+            this.lblKeywordsTitle.TabIndex = 12;
+            this.lblKeywordsTitle.Text = "File List Top 10 Keywords";
+            this.lblKeywordsTitle.Visible = false;
             // 
             // labelFileSearchResult
             // 
@@ -96,29 +122,15 @@
             this.gbXmlFileInfo.TabStop = false;
             this.gbXmlFileInfo.Text = "Xml File Infomation";
             // 
-            // lblKeywordsTitle
+            // btnZipfDistribution
             // 
-            this.lblKeywordsTitle.AutoSize = true;
-            this.lblKeywordsTitle.Location = new System.Drawing.Point(6, 247);
-            this.lblKeywordsTitle.Name = "lblKeywordsTitle";
-            this.lblKeywordsTitle.Size = new System.Drawing.Size(129, 12);
-            this.lblKeywordsTitle.TabIndex = 12;
-            this.lblKeywordsTitle.Text = "File List Top 10 Keywords";
-            this.lblKeywordsTitle.Visible = false;
-            // 
-            // lblFileKeywords
-            // 
-            this.lblFileKeywords.AllowDrop = true;
-            this.lblFileKeywords.AutoEllipsis = true;
-            this.lblFileKeywords.AutoSize = true;
-            this.lblFileKeywords.Location = new System.Drawing.Point(6, 267);
-            this.lblFileKeywords.MaximumSize = new System.Drawing.Size(400, 30);
-            this.lblFileKeywords.Name = "lblFileKeywords";
-            this.lblFileKeywords.Size = new System.Drawing.Size(100, 12);
-            this.lblFileKeywords.TabIndex = 13;
-            this.lblFileKeywords.Text = "No Keywords found";
-            this.lblFileKeywords.Visible = false;
-            this.lblFileKeywords.DoubleClick += new System.EventHandler(this.lblFileKeywords_DoubleClick);
+            this.btnZipfDistribution.Location = new System.Drawing.Point(431, 267);
+            this.btnZipfDistribution.Name = "btnZipfDistribution";
+            this.btnZipfDistribution.Size = new System.Drawing.Size(75, 23);
+            this.btnZipfDistribution.TabIndex = 14;
+            this.btnZipfDistribution.Text = "Zipf Curve";
+            this.btnZipfDistribution.UseVisualStyleBackColor = true;
+            this.btnZipfDistribution.Click += new System.EventHandler(this.btnZipfDistribution_Click);
             // 
             // SearchEngineResultView
             // 
@@ -148,5 +160,6 @@
         private System.Windows.Forms.Label labelFileSearchResult;
         private System.Windows.Forms.Label lblKeywordsTitle;
         private System.Windows.Forms.Label lblFileKeywords;
+        private System.Windows.Forms.Button btnZipfDistribution;
     }
 }

@@ -1,4 +1,5 @@
-﻿using SearchEnginesApp.Views;
+﻿using SearchEnginesApp.Utils;
+using SearchEnginesApp.Views;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -85,6 +86,14 @@ namespace SearchEnginesApp.Presenters
         {
             _toolModel.SetEventLoadFiles();
         }
+        public void InitialzeSearchBookDB()
+        {
+            _toolModel.DatabaseInitialize();
+        }
+        public void LoadSearchBookDB()
+        {
+            _toolModel.GetSearchBookDB();
+        }
 
         public void AddFileListToSearchEngine(string file)
         {
@@ -107,9 +116,13 @@ namespace SearchEnginesApp.Presenters
 
             List<SearchBooks> books = new List<SearchBooks>();
 
-            for(int i = 0; i< searchlist.Count; i++)
+            DatabaseHelper dbHelper = new DatabaseHelper();
+
+            for (int i = 0; i< searchlist.Count; i++)
             {
-                books.Add(new SearchBooks(searchlist[i], GetXmlContent(searchlist[i])));
+                var book = new SearchBooks(searchlist[i], GetXmlContent(searchlist[i]));
+                books.Add(book);
+                dbHelper.InsertBook(book);
             }
             // Trigger Event to other view to update Serach book
             _toolModel.SetEventUpdateSerchBook(books);

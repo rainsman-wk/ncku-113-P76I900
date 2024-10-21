@@ -25,36 +25,62 @@ namespace SearchEnginesApp.Views
         {
             InitializeComponent();
             _presenter = presenter;
-
-
+            UpdateFileDataBase();
+        }
+        private void UpdateFileDataBase()
+        {
+            _presenter.InitialzeSearchBookDB();
+            _presenter.LoadSearchBookDB();
         }
 
         private async void buttonGetXmlFile_Click(object sender, EventArgs e)
         {
+            DateTime CurrentTime = DateTime.Now;
             string pmid = pmidTextBox.Text;
+            string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            string referenceDirectory = Path.Combine(baseDirectory, "Reference", DateTime.Now.ToString("yyyy-MM-dd"));
+    
+            buttonGetXmlFile.Enabled = false;
             if (string.IsNullOrEmpty(pmid))
             {
                 MessageBox.Show("Please Enter PMID from URL");
+                buttonGetXmlFile.Enabled = true;
                 return;
             }
 
-            string url = $"https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id={pmid}&retmode=xml";
-
-            using (HttpClient client = new HttpClient())
+            // Create Referebce Folder
+            if (!Directory.Exists(referenceDirectory))
             {
-                try
-                {
-                    string xmlContent = await client.GetStringAsync(url);
-                    string SaveFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, $"{pmid}.xml");
-                    File.WriteAllText(SaveFilePath, xmlContent);
-                    MessageBox.Show("XML from URL Save Pass");
+                Directory.CreateDirectory(referenceDirectory);
+            }
 
-                }
-                catch (Exception ex)
+            List<string> pmidpack = pmidTextBox.Text.Split(',', '-', ' ').ToList();
+            for (int num = 0; num < pmidpack.Count; num++)
+            {
+                string url = $"https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id={pmidpack[num]}&retmode=xml";
                 {
-                    MessageBox.Show($"Download XML File from URL Error：{ex.Message}");
+                    using (HttpClient client = new HttpClient())
+                    {
+                        try
+                        {
+                            string xmlContent = await client.GetStringAsync(url);
+                            string SaveFilePath = Path.Combine(referenceDirectory, $"Pubmed_{pmidpack[num]}.xml");
+                            lblPmidLoadState.Text = $"File Download : {num+1}/{(pmidpack.Count+1).ToString()}";
+                            lblPmidLoadState.ForeColor = Color.Blue;
+                            File.WriteAllText(SaveFilePath, xmlContent);
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show($"Download XML File from URL Error：{ex.Message}");
+                        }
+                    }
                 }
             }
+
+            lblPmidLoadState.ForeColor = Color.Green;
+            TimeSpan spendTime = DateTime.Now- CurrentTime;
+            lblPmidLoadState.Text = $"Total Save {pmidpack.Count.ToString()} Files. Spend: {spendTime:s\\.ff} s" ;
+            buttonGetXmlFile.Enabled = true;
         }
 
         private void buttonLoadFile_Click(object sender, EventArgs e)
@@ -64,6 +90,7 @@ namespace SearchEnginesApp.Views
             // Load files
             OpenFileDialog LoadFiles = new OpenFileDialog
             {
+                InitialDirectory = AppDomain.CurrentDomain.BaseDirectory,
                 Filter = "XML and JSON Files|*.xml;*.json",
                 Multiselect = true,
             };
@@ -211,6 +238,12 @@ namespace SearchEnginesApp.Views
         private void SearchMode_CheckedChanged(object sender, EventArgs e)
         {
             KeyWordStringCheck(cbSerachContent.Text);
+        }
+
+        private void pmidTextBox_TextChanged(object sender, EventArgs e)
+        {
+            lblPmidLoadState.Text = $"Required for  {pmidTextBox.Text.Split(',', '-', ' ').Count().ToString()} file";
+            lblPmidLoadState.ForeColor = Color.Black;
         }
     }
 }
