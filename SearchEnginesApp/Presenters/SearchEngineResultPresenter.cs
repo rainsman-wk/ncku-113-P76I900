@@ -20,6 +20,8 @@ namespace SearchEnginesApp.Presenters
     public class SearchEngineResultPresenter
     {
         private readonly ToolModel _toolModel;
+        private bool cbStopWord = false;
+        private bool cbPortersAlgorithm = false;
         private SearchEngineResultView View { get; set; }
 
         /// <summary>
@@ -58,7 +60,9 @@ namespace SearchEnginesApp.Presenters
                 View.UpdateFileList(names, contents);
 
                 // Update Keywords from Loading File
-                View.UpdateFilesTopKeywords(Utils.KeywordExtractor.ExtractKeywordsToList(fileswordList, 10));
+                var wordsDict = Utils.KeywordExtractor.ExtractTokenToDict(fileswordList,cbPortersAlgorithm,cbStopWord);
+                List<string> keywords = wordsDict.Keys.ToList();
+                View.UpdateFilesTopKeywords(keywords, 10);
             }
             else
             {
@@ -126,9 +130,9 @@ namespace SearchEnginesApp.Presenters
             SearchWordArg searchwordArg = _toolModel.GetSearchKeyword();
             return searchwordArg;
         }
-        public Dictionary<string, (int count, List<int> indices)> GetKeywordsDict(int rank)
+        public Dictionary<string, Tuple<int, double>> GetKeywordsDict()
         {
-            Dictionary<string, (int count, List<int> indices)> keywords = new Dictionary<string, (int count, List<int> indices)>();
+            Dictionary<string, Tuple<int, double>> keywords = new Dictionary<string, Tuple<int, double>>();
 
             List<SearchBooks> books = _toolModel.GetSerachBooks();
             List<string> fileWords = new List<string>();
@@ -136,7 +140,7 @@ namespace SearchEnginesApp.Presenters
             {
                 fileWords.AddRange(book.Content.Word);
             }
-            keywords = Utils.KeywordExtractor.ExtractKeywordsToDict(fileWords, rank);
+            keywords = Utils.KeywordExtractor.ExtractTokenToDict(fileWords,cbPortersAlgorithm,cbStopWord);
             return keywords;
         }
         public void GetSearchBookTokens()
@@ -224,6 +228,11 @@ namespace SearchEnginesApp.Presenters
                 }
             }
             return findfileword;
+        }
+        public void UpdateSortOption(bool portersAlgorithm, bool stopword)
+        {
+            cbStopWord = stopword;
+            cbPortersAlgorithm = portersAlgorithm;
         }
     }
 }

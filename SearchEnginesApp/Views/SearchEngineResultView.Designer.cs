@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             this.GroupFileParser = new System.Windows.Forms.GroupBox();
+            this.cbStopWord = new System.Windows.Forms.CheckBox();
+            this.cbPortersAlgorithm = new System.Windows.Forms.CheckBox();
             this.btnZipfDistribution = new System.Windows.Forms.Button();
             this.lblFileKeywords = new System.Windows.Forms.Label();
             this.lblKeywordsTitle = new System.Windows.Forms.Label();
@@ -44,6 +46,8 @@
             // GroupFileParser
             // 
             this.GroupFileParser.AutoSize = true;
+            this.GroupFileParser.Controls.Add(this.cbStopWord);
+            this.GroupFileParser.Controls.Add(this.cbPortersAlgorithm);
             this.GroupFileParser.Controls.Add(this.btnZipfDistribution);
             this.GroupFileParser.Controls.Add(this.lblFileKeywords);
             this.GroupFileParser.Controls.Add(this.lblKeywordsTitle);
@@ -56,9 +60,31 @@
             this.GroupFileParser.TabStop = false;
             this.GroupFileParser.Text = "Files Parser";
             // 
+            // cbStopWord
+            // 
+            this.cbStopWord.AutoSize = true;
+            this.cbStopWord.Location = new System.Drawing.Point(332, 246);
+            this.cbStopWord.Name = "cbStopWord";
+            this.cbStopWord.Size = new System.Drawing.Size(101, 16);
+            this.cbStopWord.TabIndex = 16;
+            this.cbStopWord.Text = "Sort Stop Words";
+            this.cbStopWord.UseVisualStyleBackColor = true;
+            this.cbStopWord.CheckedChanged += new System.EventHandler(this.UpdateSortOption_CheckedChanged);
+            // 
+            // cbPortersAlgorithm
+            // 
+            this.cbPortersAlgorithm.AutoSize = true;
+            this.cbPortersAlgorithm.Location = new System.Drawing.Point(332, 227);
+            this.cbPortersAlgorithm.Name = "cbPortersAlgorithm";
+            this.cbPortersAlgorithm.Size = new System.Drawing.Size(127, 16);
+            this.cbPortersAlgorithm.TabIndex = 15;
+            this.cbPortersAlgorithm.Text = "Use Porters Algorithm";
+            this.cbPortersAlgorithm.UseVisualStyleBackColor = true;
+            this.cbPortersAlgorithm.CheckedChanged += new System.EventHandler(this.UpdateSortOption_CheckedChanged);
+            // 
             // btnZipfDistribution
             // 
-            this.btnZipfDistribution.Location = new System.Drawing.Point(431, 267);
+            this.btnZipfDistribution.Location = new System.Drawing.Point(431, 242);
             this.btnZipfDistribution.Name = "btnZipfDistribution";
             this.btnZipfDistribution.Size = new System.Drawing.Size(75, 23);
             this.btnZipfDistribution.TabIndex = 14;
@@ -161,5 +187,7 @@
         private System.Windows.Forms.Label lblKeywordsTitle;
         private System.Windows.Forms.Label lblFileKeywords;
         private System.Windows.Forms.Button btnZipfDistribution;
+        private System.Windows.Forms.CheckBox cbStopWord;
+        private System.Windows.Forms.CheckBox cbPortersAlgorithm;
     }
 }

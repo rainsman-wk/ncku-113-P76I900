@@ -325,7 +325,9 @@ namespace SearchEnginesApp
             }
             public List<string> GetKeywords(int rink, bool stopword = false)
             {
-                return Utils.KeywordExtractor.ExtractKeywordsToList(Word, rink, stopword);
+                var wordsDict = Utils.KeywordExtractor.ExtractTokenToDict(Word,false, stopword);
+                List<string> keywords = wordsDict.Keys.ToList();
+                return keywords.Take(rink).ToList();
             }
         }
 
@@ -405,8 +407,7 @@ namespace SearchEnginesApp
             {
                 if (value.CheckedState)
                 {
-                    string relativePath = GetRelativePath(AppDomain.CurrentDomain.BaseDirectory, value.File);
-                    pathlist.Add(relativePath);
+                    pathlist.Add(value.File);
                 }
             }
             searchfiles = pathlist;

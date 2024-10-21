@@ -333,13 +333,14 @@ namespace SearchEnginesApp.Views
             xmlForm.Show();
             _openFormsCount++;
         }
-        public void UpdateFilesTopKeywords(List<string> keywords)
+        public void UpdateFilesTopKeywords(List<string> keywords, int rank)
         {
             string text = String.Empty;
             Color textColor = new Color();
             if (keywords.Count > 0)
             {
-                text = string.Join(", ", keywords);
+                var topKeywords = keywords.Take(rank).ToList();
+                text = string.Join(", ", topKeywords);
                 textColor = Color.ForestGreen;
             }
             else
@@ -356,11 +357,16 @@ namespace SearchEnginesApp.Views
 
         private void lblFileKeywords_DoubleClick(object sender, EventArgs e)
         {
-            Dictionary<string, (int count, List<int> indices)> keywordsdict = _presenter.GetKeywordsDict(20);
+            Dictionary<string, Tuple<int, double>> keywordsdict = _presenter.GetKeywordsDict();
             StringBuilder sb = new StringBuilder();
-            foreach (var kvp in keywordsdict)
+            sb.AppendLine("Keyword".PadRight(30) + "Count".PadRight(10) + "Frequency (%)".PadRight(10));
+            sb.AppendLine(new string('-', 55));
+            foreach (var kvp in keywordsdict.Take(20)) 
             {
-                sb.AppendLine($"Keyword: [{kvp.Key}] :  Count: {kvp.Value.count}");
+                string keyword = kvp.Key.PadRight(30);
+                string count = kvp.Value.Item1.ToString().PadRight(10);
+                string frequency = (kvp.Value.Item2 * 100).ToString("F2").PadRight(10);
+                sb.AppendLine(keyword + count + frequency);
             }
             MessageBox.Show(sb.ToString(), "Keywords Top 20 List");
         }
@@ -368,6 +374,11 @@ namespace SearchEnginesApp.Views
         private void btnZipfDistribution_Click(object sender, EventArgs e)
         {
            _presenter.GetSearchBookTokens();
+        }
+
+        private void UpdateSortOption_CheckedChanged(object sender, EventArgs e)
+        {
+            _presenter.UpdateSortOption(cbPortersAlgorithm.Checked,cbStopWord.Checked);
         }
     }
 }
