@@ -134,7 +134,19 @@ namespace SearchEnginesApp.Presenters
         }
         #endregion Search Features...
 
+        public void Word2VecDataLoad()
+        {
+            List<string> tokens = new List<string>();
+            List<SearchBooks> books = _toolModel.GetSerachBooks();
+            foreach (var book in books)
+            {
+                tokens.AddRange(book.Content.Word);
+            }
 
+            Word2VecForm word2Vec = new Word2VecForm(tokens);
+            word2Vec.Show();
+
+        }
 
     }
 

@@ -40,7 +40,7 @@
             // 
             // splitContainer1
             // 
-            this.splitContainer1.Location = new System.Drawing.Point(8, 119);
+            this.splitContainer1.Location = new System.Drawing.Point(8, 138);
             this.splitContainer1.Margin = new System.Windows.Forms.Padding(2);
             this.splitContainer1.Name = "splitContainer1";
             // 
@@ -79,14 +79,14 @@
             this.MainTopView.Location = new System.Drawing.Point(8, 8);
             this.MainTopView.Margin = new System.Windows.Forms.Padding(2);
             this.MainTopView.Name = "MainTopView";
-            this.MainTopView.Size = new System.Drawing.Size(975, 107);
+            this.MainTopView.Size = new System.Drawing.Size(975, 128);
             this.MainTopView.TabIndex = 2;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(991, 462);
+            this.ClientSize = new System.Drawing.Size(991, 523);
             this.Controls.Add(this.MainTopView);
             this.Controls.Add(this.splitContainer1);
             this.Name = "MainForm";

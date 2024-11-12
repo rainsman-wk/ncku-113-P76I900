@@ -54,11 +54,14 @@ namespace SearchEnginesApp.Views
             this.tipPhrase = new System.Windows.Forms.ToolTip(this.components);
             this.tipOthers = new System.Windows.Forms.ToolTip(this.components);
             this.tipWord = new System.Windows.Forms.ToolTip(this.components);
+            this.gbWord2Vec = new System.Windows.Forms.GroupBox();
+            this.btnLoadWord2Vec = new System.Windows.Forms.Button();
             this.gbXmlLoader.SuspendLayout();
             this.gbLoadFile.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.gbSearchMode.SuspendLayout();
             this.gbInputFiles.SuspendLayout();
+            this.gbWord2Vec.SuspendLayout();
             this.SuspendLayout();
             // 
             // gbXmlLoader
@@ -131,7 +134,7 @@ namespace SearchEnginesApp.Views
             this.gbLoadFile.Margin = new System.Windows.Forms.Padding(2);
             this.gbLoadFile.Name = "gbLoadFile";
             this.gbLoadFile.Padding = new System.Windows.Forms.Padding(2);
-            this.gbLoadFile.Size = new System.Drawing.Size(533, 96);
+            this.gbLoadFile.Size = new System.Drawing.Size(533, 103);
             this.gbLoadFile.TabIndex = 12;
             this.gbLoadFile.TabStop = false;
             this.gbLoadFile.Text = "Search Engine";
@@ -295,15 +298,36 @@ namespace SearchEnginesApp.Views
             // 
             this.tipWord.BackColor = System.Drawing.Color.LightBlue;
             // 
+            // gbWord2Vec
+            // 
+            this.gbWord2Vec.Controls.Add(this.btnLoadWord2Vec);
+            this.gbWord2Vec.Location = new System.Drawing.Point(797, 11);
+            this.gbWord2Vec.Name = "gbWord2Vec";
+            this.gbWord2Vec.Size = new System.Drawing.Size(177, 100);
+            this.gbWord2Vec.TabIndex = 13;
+            this.gbWord2Vec.TabStop = false;
+            this.gbWord2Vec.Text = "Word2Vec";
+            // 
+            // btnLoadWord2Vec
+            // 
+            this.btnLoadWord2Vec.Location = new System.Drawing.Point(7, 18);
+            this.btnLoadWord2Vec.Name = "btnLoadWord2Vec";
+            this.btnLoadWord2Vec.Size = new System.Drawing.Size(75, 23);
+            this.btnLoadWord2Vec.TabIndex = 0;
+            this.btnLoadWord2Vec.Text = "Load";
+            this.btnLoadWord2Vec.UseVisualStyleBackColor = true;
+            this.btnLoadWord2Vec.Click += new System.EventHandler(this.btnLoadWord2Vec_Click);
+            // 
             // SearchEngineTopView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.gbWord2Vec);
             this.Controls.Add(this.gbLoadFile);
             this.Controls.Add(this.gbXmlLoader);
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "SearchEngineTopView";
-            this.Size = new System.Drawing.Size(800, 107);
+            this.Size = new System.Drawing.Size(977, 121);
             this.gbXmlLoader.ResumeLayout(false);
             this.gbXmlLoader.PerformLayout();
             this.gbLoadFile.ResumeLayout(false);
@@ -312,6 +336,7 @@ namespace SearchEnginesApp.Views
             this.gbSearchMode.ResumeLayout(false);
             this.gbSearchMode.PerformLayout();
             this.gbInputFiles.ResumeLayout(false);
+            this.gbWord2Vec.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -342,5 +367,7 @@ namespace SearchEnginesApp.Views
         private System.Windows.Forms.CheckBox cbInSelection;
         private System.Windows.Forms.Button buttonFileAnalysis;
         private Label lblPmidLoadState;
+        private GroupBox gbWord2Vec;
+        private Button btnLoadWord2Vec;
     }
 }

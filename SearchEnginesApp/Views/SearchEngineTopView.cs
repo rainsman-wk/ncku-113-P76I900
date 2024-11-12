@@ -246,6 +246,9 @@ namespace SearchEnginesApp.Views
             lblPmidLoadState.ForeColor = Color.Black;
         }
 
-
+        private void btnLoadWord2Vec_Click(object sender, EventArgs e)
+        {
+            _presenter.Word2VecDataLoad();
+        }
     }
 }
