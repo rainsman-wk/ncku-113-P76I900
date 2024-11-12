@@ -3,6 +3,8 @@ using SearchEnginesApp.Views;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Data.SQLite;
+using System.Data.Common;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -143,14 +145,140 @@ namespace SearchEnginesApp.Presenters
                 tokens.AddRange(book.Content.Word);
             }
 
-            Word2VecForm word2Vec = new Word2VecForm(tokens);
+            Word2VecForm word2Vec = new Word2VecForm(tokens, "searchbooks");
             word2Vec.Show();
 
         }
 
+        public async void LoadAbstractsData()
+        {
+            try
+            {
+                using (OpenFileDialog openFileDialog = new OpenFileDialog())
+                {
+                    openFileDialog.Filter = "SQLite Database Files (*.db)|*.db|All files (*.*)|*.*";
+                    openFileDialog.FilterIndex = 1;
+                    openFileDialog.Title = "Select PubMed Database File";
+
+                    if (openFileDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        string dbPath = openFileDialog.FileName;
+                        var db = new SQLiteDb(dbPath);
+
+                        // 獲取所有文章的摘要
+                        var articles = await db.GetAllArticlesAsync();
+
+                        if (!articles.Any())
+                        {
+                            MessageBox.Show("No articles found in the database.", "Information",
+                                MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            return;
+                        }
+
+                        string dbFileName = Path.GetFileName(dbPath);
+
+                        // 收集所有摘要並處理成 tokens
+                        List<string> abstractTokens = new List<string>();
+                        foreach (var article in articles)
+                        {
+                            if (!string.IsNullOrEmpty(article.Abstract))
+                            {
+                                var tokens = article.Abstract
+                                    .Split(new[] { ' ', '.', ',', ';', ':', '!', '?', '(', ')', '[', ']', '\n', '\r', '\t' },
+                                        StringSplitOptions.RemoveEmptyEntries)
+                                    .Select(t => t.Trim().ToLower())
+                                    .Where(t => !string.IsNullOrEmpty(t))
+                                    .ToList();
+
+                                abstractTokens.AddRange(tokens);
+                            }
+                        }
+
+                        if (abstractTokens.Any())
+                        {
+                            Word2VecForm word2Vec = new Word2VecForm(abstractTokens, dbFileName);
+                            word2Vec.Show();
+                        }
+                        else
+                        {
+                            MessageBox.Show("No valid abstract content found.", "Information",
+                                MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error loading database: {ex.Message}", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
     }
+    public class SQLiteDb
+    {
+        private readonly string connectionString;
 
+        public SQLiteDb(string dbPath)
+        {
+            if (string.IsNullOrEmpty(dbPath))
+            {
+                throw new ArgumentException("Database path cannot be empty.");
+            }
 
+            connectionString = $"Data Source={dbPath};Version=3;";
+        }
 
+        public async Task<List<PubMedArticle>> GetAllArticlesAsync()
+        {
+            var articles = new List<PubMedArticle>();
 
+            using (var connection = new SQLiteConnection(connectionString))
+            {
+                await connection.OpenAsync();
+
+                using (var command = connection.CreateCommand())
+                {
+                    command.CommandText = @"
+                    SELECT Id, PMID, Title, Abstract, Authors, Keywords, 
+                           PublicationDate, ImportDate, SearchTerm 
+                    FROM PubMedArticles";
+
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            try
+                            {
+                                var article = new PubMedArticle
+                                {
+                                    Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                                    PMID = reader.GetString(reader.GetOrdinal("PMID")),
+                                    Title = reader.GetString(reader.GetOrdinal("Title")),
+                                    Abstract = reader.IsDBNull(reader.GetOrdinal("Abstract")) ?
+                                        null : reader.GetString(reader.GetOrdinal("Abstract")),
+                                    Authors = reader.IsDBNull(reader.GetOrdinal("Authors")) ?
+                                        null : reader.GetString(reader.GetOrdinal("Authors")),
+                                    Keywords = reader.IsDBNull(reader.GetOrdinal("Keywords")) ?
+                                        null : reader.GetString(reader.GetOrdinal("Keywords")),
+                                    PublicationDate = DateTime.Parse(
+                                        reader.GetString(reader.GetOrdinal("PublicationDate"))),
+                                    ImportDate = DateTime.Parse(
+                                        reader.GetString(reader.GetOrdinal("ImportDate"))),
+                                    SearchTerm = reader.GetString(reader.GetOrdinal("SearchTerm"))
+                                };
+                                articles.Add(article);
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine($"Error reading article: {ex.Message}");
+                                continue;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return articles;
+        }
+    }
 }

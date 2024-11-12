@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace SearchEnginesApp.Views
@@ -33,10 +34,12 @@ namespace SearchEnginesApp.Views
             this.components = new System.ComponentModel.Container();
             this.gbXmlLoader = new System.Windows.Forms.GroupBox();
             this.lblPmidLoadState = new System.Windows.Forms.Label();
-            this.linkLabelPubmed = new System.Windows.Forms.LinkLabel();
             this.labelPMID = new System.Windows.Forms.Label();
             this.buttonGetXmlFile = new System.Windows.Forms.Button();
             this.pmidTextBox = new System.Windows.Forms.TextBox();
+            this.cmbYearFilter = new System.Windows.Forms.ComboBox();
+            this.nudMaxResults = new System.Windows.Forms.NumericUpDown();
+            this.chkAllYears = new System.Windows.Forms.CheckBox();
             this.gbLoadFile = new System.Windows.Forms.GroupBox();
             this.buttonFileAnalysis = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -55,8 +58,10 @@ namespace SearchEnginesApp.Views
             this.tipOthers = new System.Windows.Forms.ToolTip(this.components);
             this.tipWord = new System.Windows.Forms.ToolTip(this.components);
             this.gbWord2Vec = new System.Windows.Forms.GroupBox();
-            this.btnLoadWord2Vec = new System.Windows.Forms.Button();
+            this.btnLoadPubmed = new System.Windows.Forms.Button();
+            this.btnLoadXmlDataBase = new System.Windows.Forms.Button();
             this.gbXmlLoader.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMaxResults)).BeginInit();
             this.gbLoadFile.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.gbSearchMode.SuspendLayout();
@@ -69,10 +74,12 @@ namespace SearchEnginesApp.Views
             this.gbXmlLoader.AutoSize = true;
             this.gbXmlLoader.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.gbXmlLoader.Controls.Add(this.lblPmidLoadState);
-            this.gbXmlLoader.Controls.Add(this.linkLabelPubmed);
             this.gbXmlLoader.Controls.Add(this.labelPMID);
             this.gbXmlLoader.Controls.Add(this.buttonGetXmlFile);
             this.gbXmlLoader.Controls.Add(this.pmidTextBox);
+            this.gbXmlLoader.Controls.Add(this.cmbYearFilter);
+            this.gbXmlLoader.Controls.Add(this.nudMaxResults);
+            this.gbXmlLoader.Controls.Add(this.chkAllYears);
             this.gbXmlLoader.Location = new System.Drawing.Point(547, 11);
             this.gbXmlLoader.Name = "gbXmlLoader";
             this.gbXmlLoader.Size = new System.Drawing.Size(243, 101);
@@ -88,28 +95,18 @@ namespace SearchEnginesApp.Views
             this.lblPmidLoadState.Size = new System.Drawing.Size(0, 12);
             this.lblPmidLoadState.TabIndex = 14;
             // 
-            // linkLabelPubmed
-            // 
-            this.linkLabelPubmed.AutoSize = true;
-            this.linkLabelPubmed.Location = new System.Drawing.Point(17, 18);
-            this.linkLabelPubmed.Name = "linkLabelPubmed";
-            this.linkLabelPubmed.Size = new System.Drawing.Size(160, 12);
-            this.linkLabelPubmed.TabIndex = 11;
-            this.linkLabelPubmed.TabStop = true;
-            this.linkLabelPubmed.Text = "https://pubmed.ncbi.nlm.nih.gov/";
-            // 
             // labelPMID
             // 
             this.labelPMID.AutoSize = true;
-            this.labelPMID.Location = new System.Drawing.Point(17, 46);
+            this.labelPMID.Location = new System.Drawing.Point(17, 18);
             this.labelPMID.Name = "labelPMID";
-            this.labelPMID.Size = new System.Drawing.Size(33, 12);
+            this.labelPMID.Size = new System.Drawing.Size(36, 12);
             this.labelPMID.TabIndex = 10;
-            this.labelPMID.Text = "PMID";
+            this.labelPMID.Text = "Search";
             // 
             // buttonGetXmlFile
             // 
-            this.buttonGetXmlFile.Location = new System.Drawing.Point(162, 43);
+            this.buttonGetXmlFile.Location = new System.Drawing.Point(162, 15);
             this.buttonGetXmlFile.Name = "buttonGetXmlFile";
             this.buttonGetXmlFile.Size = new System.Drawing.Size(75, 23);
             this.buttonGetXmlFile.TabIndex = 9;
@@ -119,11 +116,66 @@ namespace SearchEnginesApp.Views
             // 
             // pmidTextBox
             // 
-            this.pmidTextBox.Location = new System.Drawing.Point(56, 43);
+            this.pmidTextBox.Location = new System.Drawing.Point(56, 15);
             this.pmidTextBox.Name = "pmidTextBox";
             this.pmidTextBox.Size = new System.Drawing.Size(100, 22);
             this.pmidTextBox.TabIndex = 8;
-            this.pmidTextBox.TextChanged += new System.EventHandler(this.pmidTextBox_TextChanged);
+            // 
+            // cmbYearFilter
+            // 
+            this.cmbYearFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbYearFilter.Items.AddRange(new object[] {
+            "2024",
+            "2023",
+            "2022",
+            "2021",
+            "2020",
+            "2019",
+            "2018",
+            "2017",
+            "2016",
+            "2015"});
+            this.cmbYearFilter.Location = new System.Drawing.Point(79, 44);
+            this.cmbYearFilter.Name = "cmbYearFilter";
+            this.cmbYearFilter.Size = new System.Drawing.Size(80, 20);
+            this.cmbYearFilter.TabIndex = 15;
+            // 
+            // nudMaxResults
+            // 
+            this.nudMaxResults.Increment = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.nudMaxResults.Location = new System.Drawing.Point(180, 43);
+            this.nudMaxResults.Maximum = new decimal(new int[] {
+            100000,
+            0,
+            0,
+            0});
+            this.nudMaxResults.Minimum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.nudMaxResults.Name = "nudMaxResults";
+            this.nudMaxResults.Size = new System.Drawing.Size(57, 22);
+            this.nudMaxResults.TabIndex = 16;
+            this.nudMaxResults.Value = new decimal(new int[] {
+            100000,
+            0,
+            0,
+            0});
+            // 
+            // chkAllYears
+            // 
+            this.chkAllYears.AutoSize = true;
+            this.chkAllYears.Location = new System.Drawing.Point(6, 46);
+            this.chkAllYears.Name = "chkAllYears";
+            this.chkAllYears.Size = new System.Drawing.Size(67, 16);
+            this.chkAllYears.TabIndex = 17;
+            this.chkAllYears.Text = "All Years";
+            this.chkAllYears.CheckedChanged += new System.EventHandler(this.chkAllYears_CheckedChanged);
             // 
             // gbLoadFile
             // 
@@ -300,7 +352,8 @@ namespace SearchEnginesApp.Views
             // 
             // gbWord2Vec
             // 
-            this.gbWord2Vec.Controls.Add(this.btnLoadWord2Vec);
+            this.gbWord2Vec.Controls.Add(this.btnLoadPubmed);
+            this.gbWord2Vec.Controls.Add(this.btnLoadXmlDataBase);
             this.gbWord2Vec.Location = new System.Drawing.Point(797, 11);
             this.gbWord2Vec.Name = "gbWord2Vec";
             this.gbWord2Vec.Size = new System.Drawing.Size(177, 100);
@@ -308,15 +361,25 @@ namespace SearchEnginesApp.Views
             this.gbWord2Vec.TabStop = false;
             this.gbWord2Vec.Text = "Word2Vec";
             // 
-            // btnLoadWord2Vec
+            // btnLoadPubmed
             // 
-            this.btnLoadWord2Vec.Location = new System.Drawing.Point(7, 18);
-            this.btnLoadWord2Vec.Name = "btnLoadWord2Vec";
-            this.btnLoadWord2Vec.Size = new System.Drawing.Size(75, 23);
-            this.btnLoadWord2Vec.TabIndex = 0;
-            this.btnLoadWord2Vec.Text = "Load";
-            this.btnLoadWord2Vec.UseVisualStyleBackColor = true;
-            this.btnLoadWord2Vec.Click += new System.EventHandler(this.btnLoadWord2Vec_Click);
+            this.btnLoadPubmed.Location = new System.Drawing.Point(6, 47);
+            this.btnLoadPubmed.Name = "btnLoadPubmed";
+            this.btnLoadPubmed.Size = new System.Drawing.Size(107, 23);
+            this.btnLoadPubmed.TabIndex = 1;
+            this.btnLoadPubmed.Text = "Load Pubmed";
+            this.btnLoadPubmed.UseVisualStyleBackColor = true;
+            this.btnLoadPubmed.Click += new System.EventHandler(this.btnLoadPubmed_Click);
+            // 
+            // btnLoadXmlDataBase
+            // 
+            this.btnLoadXmlDataBase.Location = new System.Drawing.Point(7, 18);
+            this.btnLoadXmlDataBase.Name = "btnLoadXmlDataBase";
+            this.btnLoadXmlDataBase.Size = new System.Drawing.Size(107, 23);
+            this.btnLoadXmlDataBase.TabIndex = 0;
+            this.btnLoadXmlDataBase.Text = "Load XML Db";
+            this.btnLoadXmlDataBase.UseVisualStyleBackColor = true;
+            this.btnLoadXmlDataBase.Click += new System.EventHandler(this.btnLoadWord2Vec_Click);
             // 
             // SearchEngineTopView
             // 
@@ -330,6 +393,7 @@ namespace SearchEnginesApp.Views
             this.Size = new System.Drawing.Size(977, 121);
             this.gbXmlLoader.ResumeLayout(false);
             this.gbXmlLoader.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMaxResults)).EndInit();
             this.gbLoadFile.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
@@ -345,7 +409,6 @@ namespace SearchEnginesApp.Views
         #endregion
 
         private System.Windows.Forms.GroupBox gbXmlLoader;
-        private System.Windows.Forms.LinkLabel linkLabelPubmed;
         private System.Windows.Forms.Label labelPMID;
         private System.Windows.Forms.Button buttonGetXmlFile;
         private System.Windows.Forms.TextBox pmidTextBox;
@@ -368,6 +431,9 @@ namespace SearchEnginesApp.Views
         private System.Windows.Forms.Button buttonFileAnalysis;
         private Label lblPmidLoadState;
         private GroupBox gbWord2Vec;
-        private Button btnLoadWord2Vec;
+        private Button btnLoadXmlDataBase;
+        private Button btnLoadPubmed;
+        private ComboBox cmbYearFilter;
+        private NumericUpDown nudMaxResults;
     }
 }
