@@ -90,9 +90,10 @@ namespace SearchEnginesApp.Utils
             };
             gridResults.Columns.AddRange(new[]
             {
-                new DataGridViewTextBoxColumn { Name = "DocumentId", HeaderText = "Document ID", Width = 100 },
-                new DataGridViewTextBoxColumn { Name = "Sentence", HeaderText = "Sentence", Width = 500 },
-                new DataGridViewTextBoxColumn { Name = "Score", HeaderText = "Score", Width = 100 }
+                 new DataGridViewTextBoxColumn { Name = "Rank", HeaderText = "#", Width = 40,   AutoSizeMode = DataGridViewAutoSizeColumnMode.None },
+                new DataGridViewTextBoxColumn { Name = "DocumentId", HeaderText = "Document ID", Width = 80 ,AutoSizeMode = DataGridViewAutoSizeColumnMode.None},
+                new DataGridViewTextBoxColumn { Name = "Sentence", HeaderText = "Sentence",AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill},
+                new DataGridViewTextBoxColumn { Name = "Score", HeaderText = "Score", Width = 70 ,AutoSizeMode = DataGridViewAutoSizeColumnMode.None}
             });
 
             lblStatus = new Label { Dock = DockStyle.Bottom, Height = 20 };
@@ -102,33 +103,74 @@ namespace SearchEnginesApp.Utils
             mainPanel.Controls.Add(gridResults, 0, 2);
             Controls.Add(mainPanel);
             Controls.Add(lblStatus);
+            gridResults.CellDoubleClick += GridResults_CellDoubleClick;
         }
 
+
+        private void GridResults_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0 || e.ColumnIndex != 1) return;
+
+            var docId = gridResults.Rows[e.RowIndex].Cells["DocumentId"].Value.ToString();
+            ShowDocumentKeySentences(docId);
+        }
+        private void ShowDocumentKeySentences(string docId)
+        {
+            try
+            {
+                Cursor = Cursors.WaitCursor;
+                UpdateStatus($"Analyzing document {docId}...");
+
+                var keySentences = analyzer.GetDocumentKeySentences(docId);
+                gridResults.Rows.Clear();
+
+                int rank = 1;
+                foreach (var sentence in keySentences)
+                {
+                    gridResults.Rows.Add(
+                        rank++,
+                        sentence.DocumentId,
+                        sentence.Sentence,
+                        sentence.Score.ToString("F4")
+                    );
+                }
+                UpdateStatus($"Found {keySentences.Count} key sentences in document {docId}");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                Cursor = Cursors.Default;
+            }
+        }
         private void SetupEventHandlers()
         {
-            btnSearch.Click += async (s, e) => await SearchDocuments();
-            btnKeySentences.Click += async (s, e) => await ShowKeyDocumentSentences();
+            btnSearch.Click += (s, e) => SearchDocuments();
+            btnKeySentences.Click += (s, e) => ShowKeyDocumentSentences();
         }
 
-        private async Task ShowKeyDocumentSentences()
+        private void ShowKeyDocumentSentences()
         {
             try
             {
                 Cursor = Cursors.WaitCursor;
                 UpdateStatus("Finding key sentences...");
-
-                var keySentences = analyzer.GetKeySentences();
                 gridResults.Rows.Clear();
 
-                foreach (var sentence in keySentences)
+                var keyParagraphSentences = analyzer.GetKeyParagraphSentences();
+                int rank = 1;
+                foreach (var sentence in keyParagraphSentences)
                 {
                     gridResults.Rows.Add(
+                        rank++,
                         sentence.DocumentId,
-                        sentence.Sentence,
+                        $"P{sentence.ParagraphIndex + 1}S{sentence.SentenceIndex + 1}: {sentence.Sentence}",
                         sentence.Score.ToString("F4"));
                 }
 
-                UpdateStatus($"Found {keySentences.Count} key sentences");
+                UpdateStatus($"Found {keyParagraphSentences.Count} key sentences");
             }
             catch (Exception ex)
             {
@@ -141,7 +183,7 @@ namespace SearchEnginesApp.Utils
             }
         }
 
-        private async Task SearchDocuments()
+        private void SearchDocuments()
         {
             if (string.IsNullOrWhiteSpace(txtQuery.Text))
             {
@@ -157,9 +199,14 @@ namespace SearchEnginesApp.Utils
                 var results = analyzer.FindSimilarSentences(txtQuery.Text);
                 gridResults.Rows.Clear();
 
+                int rank = 1;
                 foreach (var result in results)
                 {
-                    gridResults.Rows.Add(result.Sentence, result.Score.ToString("F4"));
+                    gridResults.Rows.Add(
+                        rank++,
+                        result.DocumentId,
+                        result.Sentence,
+                        result.Score.ToString("F4"));
                 }
 
                 UpdateStatus($"Found {results.Count} similar sentences");
@@ -183,6 +230,11 @@ namespace SearchEnginesApp.Utils
 
     public class TfIdfAnalyzer
     {
+        private Dictionary<string, Dictionary<int, string>> sentencePositions;
+        private double headWeight = 1.0;
+        private double tailWeight = 1.0;
+        private double headWindowPercent = 0.2;
+        private double tailWindowPercent = 0.2;
         private Dictionary<string, Dictionary<string, double>> documentVectors;
         private Dictionary<string, double> idf;
         private HashSet<string> stopWords;
@@ -194,6 +246,95 @@ namespace SearchEnginesApp.Utils
             idf = new Dictionary<string, double>();
             documentSentences = new Dictionary<string, List<string>>();
             InitializeStopWords();
+            sentencePositions = new Dictionary<string, Dictionary<int, string>>();
+        }
+        public List<RankedSentence> GetKeyParagraphSentences(int topN = 100)
+        {
+            var allSentences = new List<RankedSentence>();
+
+            foreach (var docId in documentSentences.Keys)
+            {
+                var sentences = documentSentences[docId];
+                var docVector = documentVectors[docId];
+                var paragraphs = GetParagraphs(sentences);
+
+                foreach (var paragraph in paragraphs)
+                {
+                    var paragraphSentences = new List<RankedSentence>();
+
+                    for (int i = 0; i < paragraph.Count; i++)
+                    {
+                        var sentence = paragraph[i];
+                        var sentenceVector = CreateQueryVector(sentence);
+                        var baseScore = CalculateImportanceScore(sentenceVector, docVector);
+
+                        // Apply position weights within paragraph
+                        var positionWeight = 1.0;
+                        var relativePosition = (double)i / paragraph.Count;
+
+                        if (relativePosition <= headWindowPercent)
+                            positionWeight = headWeight;
+                        else if (relativePosition >= (1 - tailWindowPercent))
+                            positionWeight = tailWeight;
+
+                        paragraphSentences.Add(new RankedSentence
+                        {
+                            DocumentId = docId,
+                            Sentence = sentence,
+                            Score = baseScore * positionWeight,
+                            ParagraphIndex = paragraphs.IndexOf(paragraph),
+                            SentenceIndex = i
+                        });
+                    }
+
+                    // Get top sentence from each paragraph
+                    if (paragraphSentences.Any())
+                    {
+                        allSentences.Add(paragraphSentences.OrderByDescending(s => s.Score).First());
+                    }
+                }
+            }
+
+            return allSentences
+                .OrderByDescending(s => s.Score)
+                .Take(topN)
+                .ToList();
+        }
+        private List<List<string>> GetParagraphs(List<string> sentences)
+        {
+            var paragraphs = new List<List<string>>();
+            var currentParagraph = new List<string>();
+
+            foreach (var sentence in sentences)
+            {
+                if (sentence.Length > 0)
+                {
+                    currentParagraph.Add(sentence);
+
+                    // Assume paragraph break on sentences ending with specific punctuation
+                    if (sentence.EndsWith(".") || sentence.EndsWith("!") || sentence.EndsWith("?"))
+                    {
+                        if (currentParagraph.Count > 0)
+                        {
+                            paragraphs.Add(new List<string>(currentParagraph));
+                            currentParagraph.Clear();
+                        }
+                    }
+                }
+            }
+
+            if (currentParagraph.Count > 0)
+            {
+                paragraphs.Add(currentParagraph);
+            }
+
+            return paragraphs;
+        }
+
+        public class RankedSentence : SimilarSentence
+        {
+            public int ParagraphIndex { get; set; }
+            public int SentenceIndex { get; set; }
         }
 
         private void InitializeStopWords()
@@ -311,7 +452,7 @@ namespace SearchEnginesApp.Utils
             {
                 if (idf.ContainsKey(word))
                 {
-                    vector[word] = wordFreq[word] * idf[word];
+                    vector[word] = wordFreq[word] * idf[word];  // TF * IDF
                 }
             }
             return vector;
@@ -341,17 +482,28 @@ namespace SearchEnginesApp.Utils
 
             foreach (var docId in documentSentences.Keys)
             {
-                foreach (var sentence in documentSentences[docId])
+                var sentences = documentSentences[docId];
+                int totalSentences = sentences.Count;
+
+                for (int i = 0; i < sentences.Count; i++)
                 {
+                    var sentence = sentences[i];
                     var sentenceVector = CreateQueryVector(sentence);
                     var docVector = documentVectors[docId];
-                    var score = CalculateImportanceScore(sentenceVector, docVector);
+                    var baseScore = CalculateImportanceScore(sentenceVector, docVector);
+
+                    // Apply position weights
+                    double positionWeight = 1.0;
+                    if (i <= totalSentences * headWindowPercent)
+                        positionWeight = headWeight;
+                    else if (i >= totalSentences * (1 - tailWindowPercent))
+                        positionWeight = tailWeight;
 
                     sentenceScores.Add(new SimilarSentence
                     {
                         DocumentId = docId,
                         Sentence = sentence,
-                        Score = score
+                        Score = baseScore * positionWeight
                     });
                 }
             }
@@ -362,21 +514,58 @@ namespace SearchEnginesApp.Utils
                 .ToList();
         }
 
+        public void SetWeightParameters(double headWeight, double tailWeight, double headWindowPercent, double tailWindowPercent)
+        {
+            this.headWeight = headWeight;
+            this.tailWeight = tailWeight;
+            this.headWindowPercent = headWindowPercent;
+            this.tailWindowPercent = tailWindowPercent;
+        }
         private double CalculateImportanceScore(Dictionary<string, double> sentenceVector, Dictionary<string, double> docVector)
         {
-            // Calculate TF-IDF weighted importance
-            double score = 0;
+            // Calculate base TF-IDF score
+            double tfidfScore = 0;
             foreach (var word in sentenceVector.Keys)
             {
                 if (docVector.ContainsKey(word))
                 {
-                    score += sentenceVector[word] * docVector[word];
+                    tfidfScore += sentenceVector[word] * docVector[word];
                 }
             }
-            return score;
+
+            double lengthNormalization = 1.0 / Math.Sqrt(sentenceVector.Count);
+            return tfidfScore * lengthNormalization;
         }
+        public List<SimilarSentence> GetDocumentKeySentences(string docId)
+        {
+            var sentences = documentSentences[docId];
+            var sentenceScores = new List<SimilarSentence>();
+            var docVector = documentVectors[docId];
+            int totalSentences = sentences.Count;
 
+            for (int i = 0; i < sentences.Count; i++)
+            {
+                var sentence = sentences[i];
+                var sentenceVector = CreateQueryVector(sentence);
+                var baseScore = CalculateImportanceScore(sentenceVector, docVector);
 
+                double positionWeight = 1.0;
+                if (i <= totalSentences * headWindowPercent)
+                    positionWeight = headWeight;
+                else if (i >= totalSentences * (1 - tailWindowPercent))
+                    positionWeight = tailWeight;
 
+                sentenceScores.Add(new SimilarSentence
+                {
+                    DocumentId = docId,
+                    Sentence = sentence,
+                    Score = baseScore * positionWeight
+                });
+            }
+
+            return sentenceScores
+                .OrderByDescending(x => x.Score)
+                .ToList();
+        }
     }
 }
