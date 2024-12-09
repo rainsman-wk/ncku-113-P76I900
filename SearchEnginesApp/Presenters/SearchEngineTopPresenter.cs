@@ -64,7 +64,7 @@ namespace SearchEnginesApp.Presenters
             {
                 XmlDocument file = new XmlDocument();
                 file.Load(path);
- 
+
                 XmlNodeList articleNodes = file.SelectNodes("//PubmedArticle");
                 foreach (XmlNode articleNode in articleNodes)
                 {
@@ -77,7 +77,7 @@ namespace SearchEnginesApp.Presenters
             }
             return context;
         }
- 
+
         public void ResetBookDatabase()
         {
             _toolModel.ClearFileList();
@@ -120,7 +120,7 @@ namespace SearchEnginesApp.Presenters
 
             DatabaseHelper dbHelper = new DatabaseHelper();
 
-            for (int i = 0; i< searchlist.Count; i++)
+            for (int i = 0; i < searchlist.Count; i++)
             {
                 var book = new SearchBooks(searchlist[i], GetXmlContent(searchlist[i]));
                 books.Add(book);
@@ -213,72 +213,110 @@ namespace SearchEnginesApp.Presenters
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-    }
-    public class SQLiteDb
-    {
-        private readonly string connectionString;
 
-        public SQLiteDb(string dbPath)
+        public async void LoadDocsForTfIdf()
         {
-            if (string.IsNullOrEmpty(dbPath))
+            try
             {
-                throw new ArgumentException("Database path cannot be empty.");
-            }
+                using (OpenFileDialog openFileDialog = new OpenFileDialog())
+                {
+                    openFileDialog.Filter = "SQLite Database Files (*.db)|*.db|All files (*.*)|*.*";
+                    openFileDialog.FilterIndex = 1;
+                    openFileDialog.Title = "Select PubMed Database File";
 
-            connectionString = $"Data Source={dbPath};Version=3;";
+                    if (openFileDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        string dbPath = openFileDialog.FileName;
+                        var db = new SQLiteDb(dbPath);
+                        var articles = await db.GetAllArticlesAsync();
+                        var abstracts = articles.Where(a => !string.IsNullOrEmpty(a.Abstract)).Take(200).Select(a => a.Abstract).ToList();
+
+                        if (abstracts.Count == 0)
+                        {
+                            MessageBox.Show("No abstracts found in database.");
+                            return;
+                        }
+                        
+                        TfIdfAnalyzerForm tfidf = new TfIdfAnalyzerForm(abstracts);
+                        tfidf.Show();
+
+
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error loading database: {ex.Message}", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
-        public async Task<List<PubMedArticle>> GetAllArticlesAsync()
+        public class SQLiteDb
         {
-            var articles = new List<PubMedArticle>();
+            private readonly string connectionString;
 
-            using (var connection = new SQLiteConnection(connectionString))
+            public SQLiteDb(string dbPath)
             {
-                await connection.OpenAsync();
-
-                using (var command = connection.CreateCommand())
+                if (string.IsNullOrEmpty(dbPath))
                 {
-                    command.CommandText = @"
+                    throw new ArgumentException("Database path cannot be empty.");
+                }
+
+                connectionString = $"Data Source={dbPath};Version=3;";
+            }
+
+            public async Task<List<PubMedArticle>> GetAllArticlesAsync()
+            {
+                var articles = new List<PubMedArticle>();
+
+                using (var connection = new SQLiteConnection(connectionString))
+                {
+                    await connection.OpenAsync();
+
+                    using (var command = connection.CreateCommand())
+                    {
+                        command.CommandText = @"
                     SELECT Id, PMID, Title, Abstract, Authors, Keywords, 
                            PublicationDate, ImportDate, SearchTerm 
                     FROM PubMedArticles";
 
-                    using (var reader = await command.ExecuteReaderAsync())
-                    {
-                        while (await reader.ReadAsync())
+                        using (var reader = await command.ExecuteReaderAsync())
                         {
-                            try
+                            while (await reader.ReadAsync())
                             {
-                                var article = new PubMedArticle
+                                try
                                 {
-                                    Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                                    PMID = reader.GetString(reader.GetOrdinal("PMID")),
-                                    Title = reader.GetString(reader.GetOrdinal("Title")),
-                                    Abstract = reader.IsDBNull(reader.GetOrdinal("Abstract")) ?
-                                        null : reader.GetString(reader.GetOrdinal("Abstract")),
-                                    Authors = reader.IsDBNull(reader.GetOrdinal("Authors")) ?
-                                        null : reader.GetString(reader.GetOrdinal("Authors")),
-                                    Keywords = reader.IsDBNull(reader.GetOrdinal("Keywords")) ?
-                                        null : reader.GetString(reader.GetOrdinal("Keywords")),
-                                    PublicationDate = DateTime.Parse(
-                                        reader.GetString(reader.GetOrdinal("PublicationDate"))),
-                                    ImportDate = DateTime.Parse(
-                                        reader.GetString(reader.GetOrdinal("ImportDate"))),
-                                    SearchTerm = reader.GetString(reader.GetOrdinal("SearchTerm"))
-                                };
-                                articles.Add(article);
-                            }
-                            catch (Exception ex)
-                            {
-                                Console.WriteLine($"Error reading article: {ex.Message}");
-                                continue;
+                                    var article = new PubMedArticle
+                                    {
+                                        Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                                        PMID = reader.GetString(reader.GetOrdinal("PMID")),
+                                        Title = reader.GetString(reader.GetOrdinal("Title")),
+                                        Abstract = reader.IsDBNull(reader.GetOrdinal("Abstract")) ?
+                                            null : reader.GetString(reader.GetOrdinal("Abstract")),
+                                        Authors = reader.IsDBNull(reader.GetOrdinal("Authors")) ?
+                                            null : reader.GetString(reader.GetOrdinal("Authors")),
+                                        Keywords = reader.IsDBNull(reader.GetOrdinal("Keywords")) ?
+                                            null : reader.GetString(reader.GetOrdinal("Keywords")),
+                                        PublicationDate = DateTime.Parse(
+                                            reader.GetString(reader.GetOrdinal("PublicationDate"))),
+                                        ImportDate = DateTime.Parse(
+                                            reader.GetString(reader.GetOrdinal("ImportDate"))),
+                                        SearchTerm = reader.GetString(reader.GetOrdinal("SearchTerm"))
+                                    };
+                                    articles.Add(article);
+                                }
+                                catch (Exception ex)
+                                {
+                                    Console.WriteLine($"Error reading article: {ex.Message}");
+                                    continue;
+                                }
                             }
                         }
                     }
                 }
-            }
 
-            return articles;
+                return articles;
+            }
         }
     }
 }

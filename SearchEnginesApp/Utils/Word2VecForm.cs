@@ -2810,5 +2810,114 @@ namespace SearchEnginesApp.Utils
         }
     }
 
+    public class CBOWModel
+    {
+        private readonly Dictionary<string, MathNet.Numerics.LinearAlgebra.Vector<double>> inputVectors;
+        private readonly Dictionary<string, MathNet.Numerics.LinearAlgebra.Vector<double>> outputVectors;
+        private readonly int dimensions;
+        private readonly double learningRate;
+        private readonly Random random;
+
+        public CBOWModel(int dimensions, double learningRate = 0.025)
+        {
+            this.dimensions = dimensions;
+            this.learningRate = learningRate;
+            this.random = new Random();
+            this.inputVectors = new Dictionary<string, MathNet.Numerics.LinearAlgebra.Vector<double>>();
+            this.outputVectors = new Dictionary<string, MathNet.Numerics.LinearAlgebra.Vector<double>>();
+        }
+
+        public void InitializeVectors(IEnumerable<string> vocabulary)
+        {
+            foreach (var word in vocabulary)
+            {
+                var inputVector = MathNet.Numerics.LinearAlgebra.Vector<double>.Build.Dense(dimensions);
+                var outputVector = MathNet.Numerics.LinearAlgebra.Vector<double>.Build.Dense(dimensions);
+
+                // Initialize with small random values
+                for (int i = 0; i < dimensions; i++)
+                {
+                    inputVector[i] = (random.NextDouble() - 0.5) / dimensions;
+                    outputVector[i] = (random.NextDouble() - 0.5) / dimensions;
+                }
+
+                inputVectors[word] = inputVector;
+                outputVectors[word] = outputVector;
+            }
+        }
+
+        public void Train(List<string> tokens, int windowSize, int epochs)
+        {
+            for (int epoch = 0; epoch < epochs; epoch++)
+            {
+                for (int position = 0; position < tokens.Count; position++)
+                {
+                    var contextWords = GetContextWords(tokens, position, windowSize);
+                    var targetWord = tokens[position];
+
+                    if (contextWords.Count == 0) continue;
+
+                    // Get context vector (average of context word vectors)
+                    var contextVector = GetContextVector(contextWords);
+
+                    // Calculate error gradient
+                    var targetVector = outputVectors[targetWord];
+                    var error = contextVector - targetVector;
+
+                    // Update vectors
+                    UpdateVectors(contextWords, targetWord, error);
+                }
+            }
+        }
+
+        private List<string> GetContextWords(List<string> tokens, int position, int windowSize)
+        {
+            var contextWords = new List<string>();
+            int start = Math.Max(0, position - windowSize);
+            int end = Math.Min(tokens.Count - 1, position + windowSize);
+
+            for (int i = start; i <= end; i++)
+            {
+                if (i != position)
+                    contextWords.Add(tokens[i]);
+            }
+
+            return contextWords;
+        }
+
+        private MathNet.Numerics.LinearAlgebra.Vector<double> GetContextVector(List<string> contextWords)
+        {
+            var contextVector = MathNet.Numerics.LinearAlgebra.Vector<double>.Build.Dense(dimensions);
+
+            foreach (var word in contextWords)
+            {
+                if (inputVectors.ContainsKey(word))
+                    contextVector += inputVectors[word];
+            }
+
+            return contextVector / contextWords.Count;
+        }
+
+        private void UpdateVectors(List<string> contextWords, string targetWord,
+            MathNet.Numerics.LinearAlgebra.Vector<double> error)
+        {
+            // Update output vector for target word
+            outputVectors[targetWord] -= error * learningRate;
+
+            // Update input vectors for context words
+            foreach (var contextWord in contextWords)
+            {
+                if (inputVectors.ContainsKey(contextWord))
+                {
+                    inputVectors[contextWord] -= error * learningRate / contextWords.Count;
+                }
+            }
+        }
+
+        public MathNet.Numerics.LinearAlgebra.Vector<double> GetWordVector(string word)
+        {
+            return inputVectors.ContainsKey(word) ? inputVectors[word] : null;
+        }
+    }
 
 }

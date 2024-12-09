@@ -58,6 +58,7 @@ namespace SearchEnginesApp.Views
             this.tipOthers = new System.Windows.Forms.ToolTip(this.components);
             this.tipWord = new System.Windows.Forms.ToolTip(this.components);
             this.gbWord2Vec = new System.Windows.Forms.GroupBox();
+            this.btnAnylzeTfIDf = new System.Windows.Forms.Button();
             this.btnLoadPubmed = new System.Windows.Forms.Button();
             this.btnLoadXmlDataBase = new System.Windows.Forms.Button();
             this.gbXmlLoader.SuspendLayout();
@@ -154,7 +155,7 @@ namespace SearchEnginesApp.Views
             0,
             0});
             this.nudMaxResults.Minimum = new decimal(new int[] {
-            1000,
+            100,
             0,
             0,
             0});
@@ -183,9 +184,9 @@ namespace SearchEnginesApp.Views
             this.gbLoadFile.Controls.Add(this.groupBox1);
             this.gbLoadFile.Controls.Add(this.gbInputFiles);
             this.gbLoadFile.Location = new System.Drawing.Point(9, 9);
-            this.gbLoadFile.Margin = new System.Windows.Forms.Padding(2);
+            this.gbLoadFile.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.gbLoadFile.Name = "gbLoadFile";
-            this.gbLoadFile.Padding = new System.Windows.Forms.Padding(2);
+            this.gbLoadFile.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.gbLoadFile.Size = new System.Drawing.Size(533, 103);
             this.gbLoadFile.TabIndex = 12;
             this.gbLoadFile.TabStop = false;
@@ -352,6 +353,7 @@ namespace SearchEnginesApp.Views
             // 
             // gbWord2Vec
             // 
+            this.gbWord2Vec.Controls.Add(this.btnAnylzeTfIDf);
             this.gbWord2Vec.Controls.Add(this.btnLoadPubmed);
             this.gbWord2Vec.Controls.Add(this.btnLoadXmlDataBase);
             this.gbWord2Vec.Location = new System.Drawing.Point(797, 11);
@@ -360,6 +362,16 @@ namespace SearchEnginesApp.Views
             this.gbWord2Vec.TabIndex = 13;
             this.gbWord2Vec.TabStop = false;
             this.gbWord2Vec.Text = "Word2Vec";
+            // 
+            // btnAnylzeTfIDf
+            // 
+            this.btnAnylzeTfIDf.Location = new System.Drawing.Point(7, 72);
+            this.btnAnylzeTfIDf.Name = "btnAnylzeTfIDf";
+            this.btnAnylzeTfIDf.Size = new System.Drawing.Size(107, 23);
+            this.btnAnylzeTfIDf.TabIndex = 2;
+            this.btnAnylzeTfIDf.Text = "Analyze TD-IDF";
+            this.btnAnylzeTfIDf.UseVisualStyleBackColor = true;
+            this.btnAnylzeTfIDf.Click += new System.EventHandler(this.btnAnylzeTfIDf_Click);
             // 
             // btnLoadPubmed
             // 
@@ -388,7 +400,7 @@ namespace SearchEnginesApp.Views
             this.Controls.Add(this.gbWord2Vec);
             this.Controls.Add(this.gbLoadFile);
             this.Controls.Add(this.gbXmlLoader);
-            this.Margin = new System.Windows.Forms.Padding(2);
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "SearchEngineTopView";
             this.Size = new System.Drawing.Size(977, 121);
             this.gbXmlLoader.ResumeLayout(false);
@@ -435,5 +447,6 @@ namespace SearchEnginesApp.Views
         private Button btnLoadPubmed;
         private ComboBox cmbYearFilter;
         private NumericUpDown nudMaxResults;
+        private Button btnAnylzeTfIDf;
     }
 }

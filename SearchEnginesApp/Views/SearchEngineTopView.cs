@@ -13,6 +13,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
+using System.Xml.Linq;
 using static SearchEnginesApp.ToolModel;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -331,6 +332,11 @@ namespace SearchEnginesApp.Views
                 cmbYearFilter.Enabled = true;
             }
         }
+
+        private void btnAnylzeTfIDf_Click(object sender, EventArgs e)
+        {
+            _presenter.LoadDocsForTfIdf();
+        }
     }
 
     public class PubMedProcessor
@@ -346,7 +352,7 @@ namespace SearchEnginesApp.Views
             client.Timeout = TimeSpan.FromMinutes(5);
         }
 
-        public async Task<List<string>> SearchPubMed(string searchTerm, int maxResults = 50000)
+        public async Task<List<string>> SearchPubMed(string searchTerm, int maxResults = 200)
         {
             try
             {
