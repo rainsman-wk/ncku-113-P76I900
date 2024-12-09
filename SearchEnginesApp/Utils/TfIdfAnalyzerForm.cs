@@ -22,6 +22,8 @@ namespace SearchEnginesApp.Utils
         private Button btnKeySentences;
         private Label lblStatus;
         private Button btnCompare;
+        private NumericUpDown numK1;
+        private NumericUpDown numB;
 
         public TfIdfAnalyzerForm(List<string> document)
         {
@@ -131,6 +133,32 @@ namespace SearchEnginesApp.Utils
                 AutoSize = true
             };
 
+            var lblK1 = new Label { Text = "k1:", Location = new Point(220, 10), Width = 10 };
+            this.numK1 = new NumericUpDown
+            {
+                Location = new Point(240, 10),
+                Width = 50,
+                DecimalPlaces = 2,
+                Increment = 0.1M,
+                Minimum = 0.1M,
+                Maximum = 3.0M,
+                Value = 1.2M,
+                Enabled = false
+            };
+
+            var lblB = new Label { Text = "b:", Location = new Point(300, 10), Width = 120 };
+            this.numB = new NumericUpDown
+            {
+                Location = new Point(320, 10),
+                Width = 50,
+                DecimalPlaces = 2,
+                Increment = 0.05M,
+                Minimum = 0M,
+                Maximum = 1.0M,
+                Value = 0.75M,
+                Enabled = false
+            };
+
             mainPanel.Controls.Add(algorithmPanel, 0, 0);
             mainPanel.Controls.Add(controlPanel, 0, 1);
             mainPanel.Controls.Add(searchPanel, 0, 2);
@@ -142,19 +170,23 @@ namespace SearchEnginesApp.Utils
                 if (classicRadio.Checked && analyzer != null)
                 {
                     analyzer.SetTfIdfStrategy(false);
+                    numK1.Enabled = false;
+                    numB.Enabled = false;
                     UpdateStatus("Using Classic TF-IDF");
                 }
             };
 
-            bm25Radio.CheckedChanged += (s, e) => {
+            bm25Radio.CheckedChanged += (s, e) =>
+            {
                 if (bm25Radio.Checked && analyzer != null)
                 {
                     analyzer.SetTfIdfStrategy(true);
-                    UpdateStatus("Using BM25 TF-IDF");
+                    numK1.Enabled = true;
+                    numB.Enabled = true;
+                    UpdateBM25Parameters();
+                    UpdateStatus($"Using BM25 TF-IDF (k1={numK1.Value:F2}, b={numB.Value:F2})");
                 }
             };
-            radioGroup.Controls.AddRange(new Control[] { classicRadio, bm25Radio });
-            algorithmPanel.Controls.Add(radioGroup);
 
             Controls.Add(mainPanel);
             Controls.Add(lblStatus);
@@ -169,7 +201,32 @@ namespace SearchEnginesApp.Utils
             controlPanel.Controls.Add(btnCompare);
 
             btnCompare.Click += (s, e) => CompareAlgorithms();
+            numK1.ValueChanged += (s, e) => UpdateBM25Parameters();
+            numB.ValueChanged += (s, e) => UpdateBM25Parameters();
+
+            algorithmPanel.Controls.AddRange(new Control[] { radioGroup, lblK1, numK1, lblB, numB });
+            radioGroup.Controls.AddRange(new Control[] { classicRadio, bm25Radio });
+
         }
+
+        void UpdateBM25Parameters()
+        {
+            try
+            {
+                var bm25 = analyzer?.GetBM25Strategy();
+                if (bm25 != null)
+                {
+                    bm25.SetParameters((double)numK1.Value, (double)numB.Value);
+                    UpdateStatus($"BM25 parameters updated: k1={numK1.Value:F2}, b={numB.Value:F2}");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error updating BM25 parameters: {ex.Message}");
+            }
+        }
+
+
         private void CompareAlgorithms()
         {
             try
@@ -443,6 +500,10 @@ namespace SearchEnginesApp.Utils
             sentencePositions = new Dictionary<string, Dictionary<int, string>>();
             tfidfStrategy = new ClassicTfIdf();  // 設定默認策略
             documentParagraphs = new Dictionary<string, List<List<string>>>();
+        }
+        public BM25TfIdf GetBM25Strategy()
+        {
+            return tfidfStrategy as BM25TfIdf;
         }
         public List<string> GetDocumentSentences(string docId)
         {
@@ -786,13 +847,21 @@ namespace SearchEnginesApp.Utils
 
     public class BM25TfIdf : ITfIdfStrategy
     {
-        private const double k1 = 1.2;
-        private const double b = 0.75;
+        private double k1 = 1.2;
+        private double b = 0.75;
         private double avgDocLength;
+        private readonly List<List<string>> documents;
 
         public BM25TfIdf(List<List<string>> documents)
         {
+            this.documents = documents;
             avgDocLength = documents.Average(d => d.Count);
+        }
+
+        public void SetParameters(double newK1, double newB)
+        {
+            k1 = newK1;
+            b = newB;
         }
 
         public Dictionary<string, double> CalculateVector(List<string> terms, Dictionary<string, int> wordDocFreq, int totalDocs)
@@ -815,4 +884,8 @@ namespace SearchEnginesApp.Utils
                 );
         }
     }
+
+
+
+
 }
