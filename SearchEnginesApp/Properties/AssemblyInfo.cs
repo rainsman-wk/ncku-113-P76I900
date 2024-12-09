@@ -29,6 +29,6 @@ using System.Runtime.InteropServices;
 //      次要版本
 //      修訂編號
 //
-[assembly: AssemblyVersion("3.1.0")]
-[assembly: AssemblyFileVersion("3.1.0")]
+[assembly: AssemblyVersion("4.0.0")]
+[assembly: AssemblyFileVersion("4.0.0")]
 [assembly: NeutralResourcesLanguage("zh-TW")]
